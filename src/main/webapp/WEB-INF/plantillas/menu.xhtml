@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+
+>
+<h:head>
+</h:head>
+
+<f:view>
+    <h:body>
+        <h:form id="formIdioma">
+            <p:selectOneMenu id="menuCambiarIdioma">
+                <f:selectItem itemLabel="en" itemValue="en" />
+                <f:selectItem itemLabel="es" itemValue="es" />
+            </p:selectOneMenu>
+        </h:form>
+
+        <h:form id="menuForm" styleClass="menu-principal">
+            <p:menubar>
+                <p:menuitem value="Tipos de Productos" />
+                <p:menuitem value="Tipos de Almacen"/>
+                <p:menuitem value="Tipos de Unidad de Medida" />
+                <p:menuitem value="Almacenes"/>
+                <p:menuitem value="Características"/>
+                <p:menuitem value="Clientes" />
+                <p:menuitem value="Compras"/>
+                <p:menuitem value="Productos"/>
+                <p:menuitem value="Proveedores" outcome="/paginas/Proveedor"/>
+            </p:menubar>
+        </h:form>
+
+        <ui:insert name="content"/>
+    </h:body>
+</f:view>
+</html>
