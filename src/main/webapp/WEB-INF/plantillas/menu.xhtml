@@ -12,14 +12,12 @@
 
 <f:view>
     <h:body>
-        <h:form id="formIdioma">
-            <p:selectOneMenu id="menuCambiarIdioma">
-                <f:selectItem itemLabel="en" itemValue="en" />
-                <f:selectItem itemLabel="es" itemValue="es" />
-            </p:selectOneMenu>
-        </h:form>
-
         <h:form id="menuForm" styleClass="menu-principal">
+            <p:outputLabel value="Idioma:" />
+                <p:selectOneMenu id="menuCambiarIdioma">
+                    <f:selectItem itemLabel="en" itemValue="en" />
+                    <f:selectItem itemLabel="es" itemValue="es" />
+                </p:selectOneMenu>
             <p:menubar>
                 <p:menuitem value="Tipos de Productos" />
                 <p:menuitem value="Tipos de Almacen" outcome="/paginas/TipoAlmacen"/>

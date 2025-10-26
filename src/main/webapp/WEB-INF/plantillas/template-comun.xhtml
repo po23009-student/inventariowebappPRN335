@@ -8,19 +8,22 @@
 <f:view>
     <h:head>
         <title><ui:insert name="titulo">Inventario</ui:insert></title>
+        <h:outputStylesheet library="css" name="estilos.css" />
     </h:head>
-    <h:body>
-        <ui:insert name = "menu" >
-            <ui:include src = "./menu.xhtml" />
-        </ui:insert>
+    <h:body class="layout-principal">
+        <aside class="layout-menu">
+            <ui:insert name="menu">
+                <ui:include src="./menu.xhtml"/>
+            </ui:insert>
+        </aside>
 
-        <ui:insert name = "contenido" >
-            <ui:include src = "./default-content.xhtml" />
-        </ui:insert>
-
-        <ui:insert name = "footer" >
-            <ui:include src = "./footer.xhtml" />
-        </ui:insert>
+        <div class="layout-wrapper">
+            <main class="layout-content">
+                <ui:insert name="contenido">
+                    <ui:include src="./default-content.xhtml"/>
+                </ui:insert>
+            </main>
+        </div>
     </h:body>
 </f:view>
 </html>

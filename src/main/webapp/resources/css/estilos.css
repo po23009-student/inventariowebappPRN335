@@ -1,0 +1,50 @@
+.layout-principal {
+    display: flex;
+    min-height: 100vh;
+}
+
+.layout-principal .layout-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background-color: #003366;
+    color: white;
+    padding: 20px 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    overflow-y: auto;
+
+}
+
+.tituloPagina {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#menuForm {
+    background-color: #003366;
+    color: white;
+    padding: 20px 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    top: 0;
+    height: 100vh;
+}
+
+menuitem {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.layout-content {
+    margin-left: 250px;
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f8f9fa;
+}
+
