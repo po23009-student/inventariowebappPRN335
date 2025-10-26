@@ -7,7 +7,7 @@ public interface InventarioDAOInterface<T> {
 
     void modificar(T registro) throws IllegalArgumentException;
 
-    T leer(int id) throws IllegalArgumentException, IllegalAccessException;
+    T leer(Number id) throws IllegalArgumentException, IllegalAccessException;
 
     void eliminar(T registro) throws IllegalArgumentException, IllegalAccessException;
 

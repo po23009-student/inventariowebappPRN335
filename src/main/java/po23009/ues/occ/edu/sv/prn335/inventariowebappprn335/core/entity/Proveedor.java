@@ -1,6 +1,9 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -11,15 +14,16 @@ public class Proveedor {
     @Column(name = "id_proveedor", nullable = false)
     private Integer id;
 
-    @Size(max = 155)
+    @Size(min=15, max = 155, message = "El nombre debe tener entre 15 y 155 caracteres")
     @Column(name = "nombre", length = 155)
+    @NotNull(message = "El nombre es obligatorio")
     private String nombre;
 
     @Size(max = 155)
     @Column(name = "razon_social", length = 155)
     private String razonSocial;
 
-    @Size(max = 14)
+    @Pattern(regexp = "(^$|\\d{14})", message = "El NIT solo debe contener números. Debe tener 14 dígitos")
     @Column(name = "nit", length = 14)
     private String nit;
 

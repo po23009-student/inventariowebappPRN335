@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+>
+<f:view>
+    <h:head></h:head>
+    <h:body>
+        <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+            <ui:define name="titulo">#{compraFrm.nombreBean}</ui:define>
+
+            <ui:define name="contenido">
+                <h1>#{compraFrm.nombreBean}</h1>
+
+                <h:panelGroup id="pnlTabla" >
+                    <h:panelGrid>
+                        <h:form id="frmTop">
+                            <p:dataTable id="tabla-top"
+                                         lazy="true"
+                                         rows="#{compraFrm.pageSize}"
+                                         paginator="true"
+                                         paginatorPosition="bottom"
+                                         value="#{compraFrm.modelo}"
+                                         var="r"
+                                         selectionMode="single"
+                                         selection="#{compraFrm.registro}" rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{compraFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                <p:column>
+                                    #{r.id}
+                                    <f:facet name="header">ID</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.fecha}
+                                    <f:facet name="header">FECHA</f:facet>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton id="btnNuevo" value="Nueva Compra" actionListener="#{compraFrm.btnNuevoHandler}" >
+                                <f:ajax render=":pnlDetalle :pnlTabla"/>
+                            </p:commandButton>
+                        </h:form>
+
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup id="pnlDetalle">
+                    <h:messages showSummary="true" showDetail="true" />
+
+                    <p:tabView id="tabCompra" cache="false" dynamic="true" rendered="#{compraFrm.estado!='NADA'}">
+                        <p:tab closable="false" title="Generalidades">
+                            <h:form id="frmCrear">
+
+                                <p:commandButton
+                                        id="btnCancelar"
+                                        actionListener="#{compraFrm.btnCancelarHandler}"
+                                        icon="pi pi-times"
+                                        styleClass="rounded-button ui-button-danger"
+                                        update=":pnlDetalle :pnlTabla"
+                                />
+
+                                <h:panelGrid>
+                                    <p:outputLabel for="txtId" value="ID:" />
+                                    <p:inputText id="txtId" value="#{compraFrm.registro.id}" readonly="true" disabled="true"/>
+
+                                    <p:outputLabel for="txtProveedor" value="Proveedor:" />
+                                    <p:inputText id="txtProveedor" value="#{compraFrm.registro.idProveedor}" readonly="true" disabled="true"/>
+
+                                    <p:outputLabel for="menuEstado" value="Estado:" />
+                                    <p:selectOneMenu id="menuEstado" value="#{compraFrm.registro.estado}">
+                                        <f:selectItem itemLabel="ORDEN" itemValue="ORDEN" />
+                                        <f:selectItem itemLabel="CREADA" itemValue="CREADA" />
+                                        <f:selectItem itemLabel="APROBADA" itemValue="APROBADA" />
+                                        <f:selectItem itemLabel="RECHAZADA" itemValue="RECHAZADA" />
+                                        <f:selectItem itemLabel="ANULADA" itemValue="ANULADA" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel for="txtFecha" value="Fecha:" />
+                                    <p:inputText id="txtFecha" value="#{compraFrm.registro.fecha}" size="75" />
+
+                                    <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
+                                    <p:inputTextarea id="txtObservaciones" value="#{compraFrm.registro.observaciones}" size="80"/>
+
+                                    <p:commandButton
+                                            id="btnGuardar"
+                                            value="Guardar"
+                                            actionListener="#{compraFrm.btnGuardarHandler}"
+                                            rendered="#{compraFrm.estado=='CREAR'}"
+                                            styleClass="ui-button-success"
+                                            update=":pnlDetalle :pnlTabla"
+                                    />
+
+                                    <p:commandButton
+                                            id="btnModificar"
+                                            value="Modificar"
+                                            actionListener="#{compraFrm.btnModificarHandler}"
+                                            rendered="#{compraFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-secondary"
+                                            update=":pnlDetalle :pnlTabla"
+                                        />
+
+                                    <p:commandButton
+                                            id="btnEliminar"
+                                            value="Eliminar"
+                                            actionListener="#{compraFrm.btnEliminarHandler}"
+                                            rendered="#{compraFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-danger"
+                                            update=":pnlDetalle :pnlTabla"
+                                        />
+                                </h:panelGrid>
+                            </h:form>
+                        </p:tab>
+
+                        <p:tab closable="false" title="Productos" disabled="#{compraFrm.estado!='MODIFICAR'}">
+
+                            <h:panelGroup id="pnlProducto">
+                                <h:panelGrid>
+                                    <h:form id="frmTablaProducto">
+                                        <p:dataTable id="tabla-top"
+                                                     lazy="true"
+                                                     rows="#{productoFrm.pageSize}"
+                                                     paginator="true"
+                                                     paginatorPosition="bottom"
+                                                     value="#{productoFrm.modelo}"
+                                                     var="regProd"
+                                                     selectionMode="single"
+                                                     selection="#{productoFrm.registro}" rowKey="#{regProd.id}">
+                                            <p:ajax event="rowSelect" listener="#{productoFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                            <p:column>
+                                                #{rptp.id}
+                                                <f:facet name="header">ID</f:facet>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </h:form>
+                                </h:panelGrid>
+
+                            </h:panelGroup>
+
+                            <h:panelGroup id="pnlDetalleProducto">
+
+                            </h:panelGroup>
+                        </p:tab>
+                    </p:tabView>
+
+                </h:panelGroup>
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</f:view>
+</html>

@@ -6,6 +6,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 
 import java.util.List;
+
 public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInterface<T> {
     final Class<T> entityClass;
 
@@ -75,8 +76,8 @@ public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInt
         }
     }
 
-    public T leer(int id) {
-        if(id < 1) {
+    public T leer(Number id) {
+        if(id.intValue() < 1) {
             throw new IllegalArgumentException("Los parametros ingresados son invalidos");
         }
 
@@ -86,7 +87,6 @@ public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInt
             if(em == null) {
                 throw new IllegalStateException("EntityManager no disponible");
             }
-
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<T> cq = cb.createQuery(entityClass);
             Root<T> root = cq.from(entityClass);
@@ -94,7 +94,7 @@ public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInt
 
             TypedQuery<T> tq = em.createQuery(cq);
 
-            Predicate predicadoId = cb.equal(root.get("id"), id);
+            Predicate predicadoId = cb.equal(root.get("id"), id.intValue());
 
             cq.where(predicadoId);
 
@@ -125,30 +125,26 @@ public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInt
         }
     }
 
-    public List<T> findRange(int first, int max) throws IllegalArgumentException {
-        if(first < 0 || max < 1) {
-            throw new IllegalArgumentException();
+    public List<T> findRange(int first, int max) throws IllegalArgumentException, IllegalStateException {
+        EntityManager em = null;
+        if (first < 0 || max <= 0) {
+            throw new IllegalArgumentException("parametros no validos");
         }
-
         try {
-            EntityManager em = getEntityManager();
-
-            if(em != null) {
-                CriteriaBuilder cb = em.getCriteriaBuilder();
-                CriteriaQuery<T> cq = cb.createQuery(entityClass);
-                Root<T> rootEntry = cq.from(entityClass);
-                cq.select(rootEntry);
-
-                TypedQuery<T> allQuery = em.createQuery(cq);
-                allQuery.setFirstResult(first);
-                allQuery.setMaxResults(max);
-                return allQuery.getResultList();
+            em = getEntityManager();
+            if (em == null) {
+                throw new IllegalStateException();
             }
-
-        } catch(Exception ex) {
-            throw new IllegalStateException(ex);
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<T> cq = cb.createQuery(entityClass);
+            Root<T> raiz = cq.from(entityClass);
+            cq.select(raiz);
+            TypedQuery<T> q = em.createQuery(cq);
+            q.setFirstResult(first);
+            q.setMaxResults(max);
+            return q.getResultList();
+        } catch (Exception ex) {
+            throw new IllegalStateException();
         }
-
-        throw new IllegalStateException("No se puede acceder al repositorio");
     }
 }

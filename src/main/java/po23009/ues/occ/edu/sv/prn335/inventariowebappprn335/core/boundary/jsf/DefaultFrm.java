@@ -57,7 +57,6 @@ public abstract class DefaultFrm<T> {
     public void inicializarRegistros() {
         this.estado = ESTADO_CRUD.NADA;
         this.modelo = new LazyDataModel<T>() {
-
             @Override
             public String getRowKey(T object) {
                 if (object != null) {
@@ -113,6 +112,8 @@ public abstract class DefaultFrm<T> {
 
     public void btnGuardarHandler(ActionEvent event) {
         getDAO().crear(registro);
+        getFacesContext().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro creado", "El registro se creó correctamente"));
+        getFacesContext().getExternalContext().getFlash().setKeepMessages(true);
         this.modelo = null;
         inicializarRegistros();
     }
@@ -124,6 +125,8 @@ public abstract class DefaultFrm<T> {
 
     public void btnEliminarHandler(ActionEvent event) {
         getDAO().eliminar(this.registro);
+        getFacesContext().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Registro eliminado", "El registro fue eliminado"));
+        getFacesContext().getExternalContext().getFlash().setKeepMessages(true);
         inicializarRegistros();
     }
 
@@ -135,6 +138,8 @@ public abstract class DefaultFrm<T> {
     public void btnModificarHandler(ActionEvent actionEvent) {
         try {
             this.getDAO().modificar(this.registro);
+            getFacesContext().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro modificado", "El registro fue modificado exitosamente"));
+            getFacesContext().getExternalContext().getFlash().setKeepMessages(true);
             this.estado = ESTADO_CRUD.NADA;
             this.modelo = null;
             inicializarRegistros();

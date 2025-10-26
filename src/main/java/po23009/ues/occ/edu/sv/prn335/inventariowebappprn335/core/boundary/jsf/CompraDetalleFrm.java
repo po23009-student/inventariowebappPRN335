@@ -1,0 +1,66 @@
+package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
+
+import jakarta.enterprise.context.Dependent;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDetalleDAO;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
+
+import java.io.Serializable;
+
+@Dependent
+@Named
+public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Serializable {
+    @Inject
+    FacesContext facesContext;
+
+    @Inject
+    CompraDetalleDAO compraDetalleDAO;
+
+    public CompraDetalleFrm() {
+        this.nombreBean = "Compras";
+    }
+
+    @Override
+    protected FacesContext getFacesContext() {
+        return this.facesContext;
+    }
+
+    @Override
+    protected InventarioDefaultDataAccess<CompraDetalle> getDAO() {
+        return compraDetalleDAO;
+    }
+
+    @Override
+    protected CompraDetalle nuevoRegistro() {
+        CompraDetalle nuevaCompraDetalle = new CompraDetalle();
+        return nuevaCompraDetalle;
+    }
+
+    @Override
+    protected String getIdAsText(CompraDetalle r) {
+        if (r != null && r.getId() != null) {
+            return r.getId().toString();
+        }
+        return null;
+    }
+
+    @Override
+    protected CompraDetalle getIdByText(String id) {
+        if (id != null && this.modelo != null && !this.modelo.getWrappedData().isEmpty()) {
+            try {
+                Long buscado = Long.valueOf(id);
+                return this.modelo.getWrappedData().stream()
+                        .filter(r -> r.getId() != null && r.getId().equals(buscado))
+                        .findFirst()
+                        .orElse(null);
+            } catch (NumberFormatException e) {
+                System.err.println("ID no es un número válido: " + id);
+                return null;
+            }
+        }
+        return null;
+    }
+}
