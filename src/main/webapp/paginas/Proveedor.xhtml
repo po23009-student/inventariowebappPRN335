@@ -17,7 +17,7 @@
 
                 <h:panelGroup id="pnlTabla">
                     <h:panelGrid>
-                        <h:form id="frmTop">
+                        <h:form id="frmTop" rendered="#{proveedorFrm.estado=='NADA'}">
                             <p:dataTable id="tabla-top"
                                          lazy="true"
                                          rows="#{proveedorFrm.pageSize}"
@@ -62,15 +62,6 @@
                                     update=":pnlDetalle :pnlTabla"
                             />
 
-                            <p:commandButton
-                                    id="btnCancelar"
-                                    value="Cancelar"
-                                    actionListener="#{proveedorFrm.btnCancelarHandler}"
-                                    styleClass="ui-button ui-button-danger"
-                                    rendered="#{proveedorFrm.estado!='NADA'}"
-                                    update=":pnlDetalle :pnlTabla"
-                            />
-
                             <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
                         </h:form>
 
@@ -78,6 +69,16 @@
                 </h:panelGroup>
 
                 <h:panelGroup id="pnlDetalle">
+                    <h:form>
+                        <p:commandButton
+                                id="btnCancelar"
+                                value="Cancelar"
+                                actionListener="#{proveedorFrm.btnCancelarHandler}"
+                                styleClass="ui-button-warning"
+                                rendered="#{proveedorFrm.estado!='NADA'}"
+                                update=":pnlDetalle :pnlTabla"
+                        />
+                    </h:form>
 
                     <h:form id="frmCrear" rendered="#{proveedorFrm.estado!='NADA'}">
                         <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" showSummary="false" closable="true" />

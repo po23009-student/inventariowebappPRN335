@@ -17,7 +17,7 @@
 
                 <h:panelGroup id="pnlTabla" >
                     <h:panelGrid>
-                        <h:form id="frmTop">
+                        <h:form id="frmTop" rendered="#{tipoAlmacenFrm.estado=='NADA'}">
                             <p:dataTable id="tabla-top"
                                          lazy="true"
                                          rows="#{tipoAlmacenFrm.pageSize}"
@@ -53,21 +53,23 @@
                                     update=":pnlDetalle :pnlTabla"
                             />
 
-                            <p:commandButton
-                                    id="btnCancelar"
-                                    value="Cancelar"
-                                    actionListener="#{tipoAlmacenFrm.btnCancelarHandler}"
-                                    styleClass="ui-button ui-button-danger"
-                                    rendered="#{tipoAlmacenFrm.estado!='NADA'}"
-                                    update=":pnlDetalle :pnlTabla"
-                            />
-
                             <p:messages id="msgs" showDetail="true" redisplay="false" showSummary="false" closable="true" />
                         </h:form>
                     </h:panelGrid>
                 </h:panelGroup>
 
                 <h:panelGroup id="pnlDetalle">
+                    <h:form>
+                        <p:commandButton
+                                id="btnCancelar"
+                                value="Cancelar"
+                                actionListener="#{tipoAlmacenFrm.btnCancelarHandler}"
+                                styleClass="ui-button-warning"
+                                rendered="#{tipoAlmacenFrm.estado!='NADA'}"
+                                update=":pnlDetalle :pnlTabla"
+                        />
+                    </h:form>
+
                     <h:form id="frmCrear" rendered="#{tipoAlmacenFrm.estado!='NADA'}">
                         <h:panelGrid>
                             <p:outputLabel for="txtId" value="ID:" />

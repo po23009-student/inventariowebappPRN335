@@ -32,12 +32,17 @@
     height: 100vh;
 }
 
-menuitem {
+#menuForm a,
+#menuForm .menuitem,
+#menuForm .ui-menuitem,
+#menuForm .ui-menuitem-link,
+#menuForm li {
     display: block;
+    width: 100%;
+    padding: 8px 5px;
+    margin: 0;
     color: white;
-    padding: 10px;
     text-decoration: none;
-    border-radius: 5px;
     transition: background-color 0.3s ease;
 }
 
@@ -46,5 +51,25 @@ menuitem {
     flex-grow: 1;
     padding: 30px;
     background-color: #f8f9fa;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+.layout-footer {
+    position: fixed;
+    bottom: 0;
+    left: 250px;
+    width: calc(100% - 250px);
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    font-size: 17px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;
 }
 
