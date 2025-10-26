@@ -2,7 +2,6 @@ package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 

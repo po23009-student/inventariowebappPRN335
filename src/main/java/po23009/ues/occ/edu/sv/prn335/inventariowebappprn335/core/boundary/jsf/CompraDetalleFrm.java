@@ -6,9 +6,15 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDetalleDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Dependent
 @Named
@@ -51,7 +57,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     protected CompraDetalle getIdByText(String id) {
         if (id != null && this.modelo != null && !this.modelo.getWrappedData().isEmpty()) {
             try {
-                Long buscado = Long.valueOf(id);
+                UUID buscado = UUID.fromString(id);
                 return this.modelo.getWrappedData().stream()
                         .filter(r -> r.getId() != null && r.getId().equals(buscado))
                         .findFirst()
@@ -63,4 +69,6 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
         }
         return null;
     }
+
+
 }

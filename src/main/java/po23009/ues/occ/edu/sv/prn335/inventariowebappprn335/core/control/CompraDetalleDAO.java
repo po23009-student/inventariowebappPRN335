@@ -29,8 +29,8 @@ public class CompraDetalleDAO extends InventarioDefaultDataAccess<CompraDetalle>
         return em;
     }
 
-    public List<CompraDetalle> getByIdCompra(Number idCompra) {
-        if(idCompra != null && idCompra.intValue() >= 0) {
+    public List<CompraDetalle> getByIdCompra(Compra compra) {
+        if(compra != null) {
 
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<CompraDetalle> cq = cb.createQuery(entityClass);
@@ -39,13 +39,12 @@ public class CompraDetalleDAO extends InventarioDefaultDataAccess<CompraDetalle>
 
             TypedQuery<CompraDetalle> tq = em.createQuery(cq);
 
-            Predicate predicadoId = cb.equal(root.get("idCompra"), idCompra.intValue());
+            Predicate predicadoId = cb.equal(root.get("idCompra"), compra.getId());
 
             cq.where(predicadoId);
 
             return tq.getResultList();
         }
-
 
         return List.of();
     }

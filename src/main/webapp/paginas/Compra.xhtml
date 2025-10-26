@@ -113,27 +113,31 @@
                             </h:form>
                         </p:tab>
 
-                        <p:tab closable="false" title="Productos" disabled="#{compraFrm.estado!='MODIFICAR'}">
+                        <p:tab closable="false" title="CompraDetalle" disabled="#{compraFrm.estado!='MODIFICAR'}">
 
-                            <h:panelGroup id="pnlProducto">
+                            <h:panelGroup id="pnlCompraDetalle">
                                 <h:panelGrid>
-                                    <h:form id="frmTablaProducto">
-                                        <p:dataTable id="tabla-top"
+                                    <h:form id="frmTablaDetalleCompra">
+                                        <p:dataTable id="tabla-detalle-compra"
                                                      lazy="true"
-                                                     rows="#{productoFrm.pageSize}"
+                                                     rows="#{compraDetalleFrm.pageSize}"
                                                      paginator="true"
                                                      paginatorPosition="bottom"
-                                                     value="#{productoFrm.modelo}"
-                                                     var="regProd"
+                                                     value="#{compraDetalleFrm.modelo}"
+                                                     var="rcd"
                                                      selectionMode="single"
-                                                     selection="#{productoFrm.registro}" rowKey="#{regProd.id}">
-                                            <p:ajax event="rowSelect" listener="#{productoFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                                     selection="#{compraDetalleFrm.registro}" rowKey="#{rcd.id}">
+                                            <p:ajax event="rowSelect" listener="#{compraDetalleFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
                                             <p:column>
-                                                #{rptp.id}
+                                                #{rcd.id}
                                                 <f:facet name="header">ID</f:facet>
                                             </p:column>
 
                                         </p:dataTable>
+
+                                        <p:commandButton id="btnNuevo" value="Nueva Compra" actionListener="#{compraDetalleFrm.btnNuevoHandler}" >
+                                            <f:ajax render=":pnlDetalle :pnlTabla"/>
+                                        </p:commandButton>
                                     </h:form>
                                 </h:panelGrid>
 

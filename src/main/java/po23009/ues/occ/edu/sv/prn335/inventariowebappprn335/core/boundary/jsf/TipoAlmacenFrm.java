@@ -4,26 +4,24 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDAO;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
+import jakarta.validation.Valid;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.TipoAlmacenDAO;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.TipoAlmacen;
 
 import java.io.Serializable;
 
 @Named
 @ViewScoped
-public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
+public class TipoAlmacenFrm extends DefaultFrm<TipoAlmacen> implements Serializable {
     @Inject
     FacesContext facesContext;
 
     @Inject
-    CompraDAO compraDAO;
+    TipoAlmacenDAO tipoAlmacenDAO;
 
-    @Inject
-    CompraDetalleFrm cDetalleFrm;
-
-    public CompraFrm() {
-        this.nombreBean = "Compras";
+    public TipoAlmacenFrm() {
+        this.nombreBean = "Tipos de Almacen";
     }
 
     @Override
@@ -32,18 +30,19 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     }
 
     @Override
-    protected InventarioDefaultDataAccess<Compra> getDAO() {
-        return compraDAO;
+    protected InventarioDefaultDataAccess<TipoAlmacen> getDAO() {
+        return tipoAlmacenDAO;
     }
 
     @Override
-    protected Compra nuevoRegistro() {
-        Compra nuevaCompra = new Compra();
-        return nuevaCompra;
+    protected TipoAlmacen nuevoRegistro() {
+        @Valid
+        TipoAlmacen nuevoTipoAlmacen = new TipoAlmacen();
+        return nuevoTipoAlmacen;
     }
 
     @Override
-    protected String getIdAsText(Compra r) {
+    protected String getIdAsText(TipoAlmacen r) {
         if (r != null && r.getId() != null) {
             return r.getId().toString();
         }
@@ -51,10 +50,10 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     }
 
     @Override
-    protected Compra getIdByText(String id) {
+    protected TipoAlmacen getIdByText(String id) {
         if (id != null && this.modelo != null && !this.modelo.getWrappedData().isEmpty()) {
             try {
-                Long buscado = Long.valueOf(id);
+                Integer buscado = Integer.valueOf(id);
                 return this.modelo.getWrappedData().stream()
                         .filter(r -> r.getId() != null && r.getId().equals(buscado))
                         .findFirst()
@@ -65,13 +64,5 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
             }
         }
         return null;
-    }
-
-    public CompraDetalleFrm getcDetalleFrm() {
-        return cDetalleFrm;
-    }
-
-    public void setcDetalleFrm(CompraDetalleFrm cDetalleFrm) {
-        this.cDetalleFrm = cDetalleFrm;
     }
 }
