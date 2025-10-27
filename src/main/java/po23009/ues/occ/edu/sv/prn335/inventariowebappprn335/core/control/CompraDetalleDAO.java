@@ -29,23 +29,9 @@ public class CompraDetalleDAO extends InventarioDefaultDataAccess<CompraDetalle>
         return em;
     }
 
-    public List<CompraDetalle> getByIdCompra(Compra compra) {
-        if(compra != null) {
-
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<CompraDetalle> cq = cb.createQuery(entityClass);
-            Root<CompraDetalle> root = cq.from(entityClass);
-            cq.select(root);
-
-            TypedQuery<CompraDetalle> tq = em.createQuery(cq);
-
-            Predicate predicadoId = cb.equal(root.get("idCompra"), compra.getId());
-
-            cq.where(predicadoId);
-
-            return tq.getResultList();
-        }
-
-        return List.of();
+    public List<CompraDetalle> obtenerPorCompra(Long idCompra) {
+        return em.createQuery("SELECT d FROM CompraDetalle d WHERE d.idCompra.id = :idCompra", CompraDetalle.class)
+                .setParameter("idCompra", idCompra)
+                .getResultList();
     }
 }

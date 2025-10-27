@@ -1,6 +1,7 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
 
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -10,6 +11,9 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.Proveed
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
@@ -19,6 +23,8 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
 
     @Inject
     ProveedorDAO proveedorDAO;
+
+    private String textoSeleccionado;
 
     public ProveedorFrm() {
         this.nombreBean = "Proveedores";
@@ -64,5 +70,28 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
             }
         }
         return null;
+    }
+
+    public List<String> completeText(String query) {
+        String queryLowerCase = query.toLowerCase();
+        ArrayList<String> listaSalida = new ArrayList<>();
+        List<Proveedor> proveedores = proveedorDAO.findRange(0, Integer.MAX_VALUE);
+        for (Proveedor proveedor : proveedores) {
+            listaSalida.add(proveedor.getNombre());
+        }
+
+        return listaSalida.stream().filter(t -> t.toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());
+    }
+
+    public void seleccionarProveedor() {
+        this.registro.setNombre(textoSeleccionado);
+    }
+
+    public String getTextoSeleccionado() {
+        return textoSeleccionado;
+    }
+
+    public void setTextoSeleccionado(String textoSeleccionado) {
+        this.textoSeleccionado = textoSeleccionado;
     }
 }

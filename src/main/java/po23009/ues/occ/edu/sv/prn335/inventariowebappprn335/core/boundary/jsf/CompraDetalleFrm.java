@@ -25,6 +25,12 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     @Inject
     CompraDetalleDAO compraDetalleDAO;
 
+    private List<CompraDetalle> detalles;
+
+    public void cargarDetalles(Long idCompra) {
+        this.detalles = compraDetalleDAO.obtenerPorCompra(idCompra);
+    }
+
     public CompraDetalleFrm() {
         this.nombreBean = "Compras";
     }
@@ -70,5 +76,11 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
         return null;
     }
 
+    public List<CompraDetalle> getDetalles() {
+        return detalles;
+    }
 
+    public void setDetalles(List<CompraDetalle> detalles) {
+        this.detalles = detalles;
+    }
 }
