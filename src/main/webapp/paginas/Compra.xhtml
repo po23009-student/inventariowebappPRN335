@@ -33,7 +33,7 @@
                                     <f:facet name="header">ID</f:facet>
                                 </p:column>
                                 <p:column>
-                                    #{r.idProveedor.nombre}
+                                    #{r.proveedor.nombre}
                                     <f:facet name="header">Proveedor</f:facet>
                                 </p:column>
                                 <p:column>
@@ -50,9 +50,12 @@
                                 </p:column>
                             </p:dataTable>
 
-                            <p:commandButton id="btnNuevo" value="Nueva Compra" actionListener="#{compraFrm.btnNuevoHandler}" >
-                                <f:ajax render=":pnlDetalle :pnlTabla"/>
-                            </p:commandButton>
+                            <p:commandButton
+                                    id="btnNuevo"
+                                    value="Nueva Compra"
+                                    actionListener="#{compraFrm.btnNuevoHandler}"
+                                    update=":pnlDetalle :pnlTabla"
+                            />
 
                             <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
                         </h:form>
@@ -155,7 +158,6 @@
                         </p:tab>
 
                         <p:tab closable="false" title="Detalles de Compra" disabled="#{compraFrm.estado!='MODIFICAR'}">
-
                             <h:panelGroup id="pnlCompraDetalle">
                                 <h:panelGrid>
                                     <h:form id="frmTablaDetalleCompra">
