@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+>
+<f:view>
+    <h:head></h:head>
+    <h:body>
+        <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+            <ui:define name="titulo">#{tipoUnidadMedidaFrm.nombreBean}</ui:define>
+
+            <ui:define name="contenido">
+                <h1 class="tituloPagina">#{tipoUnidadMedidaFrm.nombreBean}</h1>
+
+                <h:panelGroup id="pnlTabla">
+                    <h:panelGrid>
+                        <h:form id="frmTop" rendered="#{tipoUnidadMedidaFrm.estado=='NADA'}">
+                            <p:dataTable id="tabla-top"
+                                         lazy="true"
+                                         rows="#{tipoUnidadMedidaFrm.pageSize}"
+                                         paginator="true"
+                                         paginatorPosition="bottom"
+                                         value="#{tipoUnidadMedidaFrm.modelo}"
+                                         var="r"
+                                         selectionMode="single"
+                                         selection="#{tipoUnidadMedidaFrm.registro}" rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{tipoUnidadMedidaFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                <p:column>
+                                    #{r.id}
+                                    <f:facet name="header">ID</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.nombre}
+                                    <f:facet name="header">Nombre</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.unidadBase}
+                                    <f:facet name="header">Unidad Base</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.activo?"Activo":"Inactivo"}
+                                    <f:facet name="header">Estado</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.comentarios}
+                                    <f:facet name="header">Comentarios</f:facet>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton
+                                    id="btnNuevo"
+                                    value="Nuevo Tipo de Unidad de Medida"
+                                    actionListener="#{tipoUnidadMedidaFrm.btnNuevoHandler}"
+                                    update=":pnlDetalle :pnlTabla"
+                            />
+
+                            <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+                        </h:form>
+
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup id="pnlDetalle">
+                    <h:form>
+                        <p:commandButton
+                                id="btnCancelar"
+                                value="Cancelar"
+                                actionListener="#{tipoUnidadMedidaFrm.btnCancelarHandler}"
+                                styleClass="ui-button-warning"
+                                rendered="#{tipoUnidadMedidaFrm.estado!='NADA'}"
+                                update=":pnlDetalle :pnlTabla"
+                        />
+                    </h:form>
+
+                    <p:tabView id="tabTipos" cache="false" dynamic="true" rendered="#{tipoUnidadMedidaFrm.estado!='NADA'}">
+                        <p:tab closable="false" title="Generalidades">
+
+                            <h:form id="frmCrear" rendered="#{tipoUnidadMedidaFrm.estado!='NADA'}">
+                                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+
+                                <h:panelGrid>
+                                    <p:outputLabel for="txtId" value="ID:"/>
+                                    <p:inputText id="txtId" value="#{tipoUnidadMedidaFrm.registro.id}" readonly="true"
+                                                 disabled="true"/>
+
+                                    <p:outputLabel for="txtNombre" value="Nombre:"/>
+                                    <p:inputText id="txtNombre" value="#{tipoUnidadMedidaFrm.registro.nombre}" size="75"
+                                                 required="true"/>
+
+                                    <p:outputLabel for="txtUnidadBase" value="Unidad Base:"/>
+                                    <p:inputText id="txtUnidadBase" value="#{tipoUnidadMedidaFrm.registro.unidadBase}" size="75" required="true"/>
+
+                                    <p:outputLabel for="chkActivo" value="Activo:"/>
+                                    <p:selectBooleanCheckbox id="chkActivo" value="#{tipoUnidadMedidaFrm.registro.activo}"/>
+
+                                    <p:outputLabel for="txtComentarios" value="Observaciones:"/>
+                                    <p:inputTextarea id="txtComentarios" value="#{tipoUnidadMedidaFrm.registro.comentarios}"
+                                                     size="80"/>
+
+                                    <p:commandButton
+                                            id="btnGuardar"
+                                            value="Guardar"
+                                            actionListener="#{tipoUnidadMedidaFrm.btnGuardarHandler}"
+                                            rendered="#{tipoUnidadMedidaFrm.estado=='CREAR'}"
+                                            process="@form"
+                                            update=":pnlDetalle :pnlTabla"
+                                            styleClass="ui-button-success"
+                                    />
+
+                                    <p:commandButton
+                                            id="btnModificar"
+                                            value="Modificar"
+                                            actionListener="#{tipoUnidadMedidaFrm.btnModificarHandler}"
+                                            rendered="#{tipoUnidadMedidaFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-secondary"
+                                            process="@form"
+                                            update=":pnlDetalle :pnlTabla "
+                                    />
+
+                                    <p:commandButton
+                                            id="btnEliminar"
+                                            value="Eliminar"
+                                            actionListener="#{tipoUnidadMedidaFrm.btnEliminarHandler}"
+                                            rendered="#{tipoUnidadMedidaFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-danger"
+                                            update=":frmTop :pnlDetalle :pnlTabla"
+                                    />
+                                </h:panelGrid>
+                            </h:form>
+                        </p:tab>
+
+                        <p:tab id="pnlDetallesUnidades" closable="false" title="Unidades de Medida" disabled="#{tipoUnidadMedidaFrm.estado!='MODIFICAR'}">
+                            <ui:include src="UnidadMedida.xhtml" />
+                        </p:tab>
+
+                    </p:tabView>
+                </h:panelGroup>
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</f:view>
+</html>

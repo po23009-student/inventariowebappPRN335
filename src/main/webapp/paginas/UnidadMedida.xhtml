@@ -1,0 +1,100 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="jakarta.faces.html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:form id="frmUnidadesCompleto">
+
+        <h:panelGroup id="pnlUnidadesMedida" layout="block">
+
+            <h:panelGroup id="pnlTablaUnidadesMedida" rendered="#{unidadMedidaFrm.estado=='NADA'}">
+                <p:dataTable
+                        id="tablaUnidades"
+                        var="u"
+                        value="#{tipoUnidadMedidaFrm.unidadesPorTipo}"
+                        selectionMode="single" selection="#{unidadMedidaFrm.registro}"
+                        rowKey="#{u.id}"
+                        paginator="true"
+                        paginatorPosition="bottom"
+                        rows="#{unidadMedidaFrm.pageSize}"
+                        emptyMessage="No hay unidades de medida registradas para este tipo">
+
+                    <p:ajax event="rowSelect" listener="#{unidadMedidaFrm.selectionHandler}" update="pnlUnidadesMedida" />
+
+                <p:column headerText="ID">#{u.id}</p:column>
+                    <p:column headerText="Equivalencia">#{u.equivalencia}</p:column>
+                    <p:column headerText="Expresión Regular">#{u.expresionRegular}</p:column>
+                    <p:column headerText="Estado"><h:outputText value="#{u.activo?'Activo':'Inactivo'}"/></p:column>
+                    <p:column headerText="Comentarios">#{u.comentarios}</p:column>
+                </p:dataTable>
+
+                <p:commandButton
+                        id="btnNuevo"
+                        value="Nueva Unidad de Medida"
+                        styleClass="ui-button"
+                        actionListener="#{unidadMedidaFrm.btnNuevoHandler}"
+                        process="@this"
+                        update="pnlUnidadesMedida"/>
+
+                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" closable="true"/>
+            </h:panelGroup>
+
+            <h:panelGroup id="pnlDetalleUnidades" rendered="#{unidadMedidaFrm.estado!='NADA'}">
+                <p:commandButton
+                        id="btnCancelarUnidadMedida"
+                        value="Cancelar Unidades de Medida"
+                        actionListener="#{unidadMedidaFrm.btnCancelarHandler}"
+                        styleClass="ui-button-warning"
+                        process="@this"
+                        update="pnlUnidadesMedida"
+                />
+
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel for="txtId" value="ID:"/>
+                    <p:inputText id="txtId" value="#{unidadMedidaFrm.registro.id}" readonly="true" disabled="true"/>
+
+                    <p:outputLabel for="txtEquivalencia" value="Equivalencia:"/>
+                    <p:inputText id="txtEquivalencia" value="#{unidadMedidaFrm.registro.equivalencia}" size="75" required="true"/>
+
+                    <p:outputLabel for="txtRegExp" value="Expresión Regular:"/>
+                    <p:inputText id="txtRegExp" value="#{unidadMedidaFrm.registro.expresionRegular}" size="75"/>
+
+                    <p:outputLabel for="chkActivo" value="Activo:"/>
+                    <p:selectBooleanCheckbox id="chkActivo" value="#{unidadMedidaFrm.registro.activo}"/>
+
+                    <p:outputLabel for="txtComentarios" value="Comentarios:"/>
+                    <p:inputTextarea id="txtComentarios" value="#{unidadMedidaFrm.registro.comentarios}" cols="60" rows="3"/>
+                </h:panelGrid>
+
+                <p:commandButton
+                        id="btnGuardar"
+                        value="Guardar"
+                        actionListener="#{unidadMedidaFrm.btnGuardarHandler}"
+                        rendered="#{unidadMedidaFrm.estado=='CREAR'}"
+                        process="@form"
+                        styleClass="ui-button-success"
+                        update="pnlUnidadesMedida tablaUnidades"/>
+
+                <p:commandButton
+                        id="btnModificar"
+                        value="Modificar"
+                        actionListener="#{unidadMedidaFrm.btnModificarHandler}"
+                        rendered="#{unidadMedidaFrm.estado=='MODIFICAR'}"
+                        process="@form"
+                        styleClass="ui-button-secondary"
+                        update="pnlUnidadesMedida"/>
+
+                <p:commandButton
+                        id="btnEliminar"
+                        value="Eliminar"
+                        actionListener="#{unidadMedidaFrm.btnEliminarHandler}"
+                        rendered="#{unidadMedidaFrm.estado=='MODIFICAR'}"
+                        styleClass="ui-button-danger"
+                        update="pnlUnidadesMedida tablaUnidades"/>
+
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</ui:composition>

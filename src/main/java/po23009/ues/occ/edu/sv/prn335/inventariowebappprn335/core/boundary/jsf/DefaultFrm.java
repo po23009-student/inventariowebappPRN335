@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
@@ -11,7 +12,6 @@ import org.primefaces.model.SortMeta;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -122,6 +122,8 @@ public abstract class DefaultFrm<T> {
     public void btnCancelarHandler(ActionEvent event) {
         this.registro = null;
         this.estado = ESTADO_CRUD.NADA;
+        this.modelo = null;
+        inicializarRegistros();
     }
 
     public void btnEliminarHandler(ActionEvent event) {

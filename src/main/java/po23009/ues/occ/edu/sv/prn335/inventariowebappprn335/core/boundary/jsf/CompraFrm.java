@@ -1,6 +1,7 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
 
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -9,6 +10,7 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraD
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -30,6 +32,8 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
 
     @Inject
     private ProveedorFrm proveedorFrm;
+
+    private Proveedor proveedorSeleccionado;
 
     private List<CompraDetalle> detallesCompra;
 
@@ -78,11 +82,27 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         return null;
     }
 
+    @Override
+    public void btnCancelarHandler(ActionEvent event) {
+        this.registro = null;
+        this.proveedorSeleccionado = null;
+        this.estado = ESTADO_CRUD.NADA;
+    }
+
     public void cargarDetallesCompra(Compra compraSeleccionada) {
         if (compraSeleccionada != null && compraSeleccionada.getId() != null) {
             this.detallesCompra = compraDetalleDAO.obtenerPorCompra(compraSeleccionada.getId());
         } else {
             this.detallesCompra = null;
+        }
+    }
+
+    public void btnSeleccionarProv(ActionEvent actionEvent) {
+        if (proveedorSeleccionado != null) {
+            this.registro.setProveedor(proveedorSeleccionado);
+            System.out.println("Proveedor seleccionado: " + proveedorSeleccionado.getNombre());
+        } else {
+            System.out.println("No se seleccionó ningún proveedor");
         }
     }
 
@@ -109,4 +129,14 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     public void setProveedorFrm(ProveedorFrm proveedorFrm) {
         this.proveedorFrm = proveedorFrm;
     }
+
+
+    public Proveedor getProveedorSeleccionado() {
+        return proveedorSeleccionado;
+    }
+
+    public void setProveedorSeleccionado(Proveedor proveedorSeleccionado) {
+        this.proveedorSeleccionado = proveedorSeleccionado;
+    }
+
 }

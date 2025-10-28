@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class Cliente {
     private String dui;
 
     @Size(max = 14)
+    @Pattern(regexp = "(^$|\\d{14})", message = "El NIT solo debe contener números. Debe tener 14 dígitos")
     @Column(name = "nit", length = 14)
     private String nit;
 

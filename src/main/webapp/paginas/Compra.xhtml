@@ -81,26 +81,32 @@
                                     <p:inputText id="txtId" value="#{compraFrm.registro.id}" readonly="true" disabled="true"/>
 
                                     <p:outputLabel for="txtProveedor" value="Proveedor:" />
-                                    <p:inputText id="txtProveedor" readonly="true" disabled="true"/>
+                                    <p:inputText id="txtProveedor" value="#{compraFrm.proveedorSeleccionado.nombre}" readonly="true"/>
 
                                     <p:commandButton value="Seleccionar" type="button" icon="pi pi-external-link" onclick="PF('dlg1').show()"/>
 
                                     <p:dialog header="Seleccionar Proveedor" widgetVar="dlg1" minHeight="10" width="350" showEffect="fade" modal="true" closeOnEscape="true">
                                         <p:autoComplete
-                                                id="acSimple"
-                                                value="#{compraFrm.proveedorFrm.textoSeleccionado}"
-                                                completeMethod="#{compraFrm.proveedorFrm.completeText}"
-                                                scrollHeight="250"
-                                                forceSelection="false"
+                                            id="acSimple"
+                                            value="#{compraFrm.proveedorSeleccionado}"
+                                            completeMethod="#{proveedorFrm.completeText}"
+                                            var="prov"
+                                            itemLabel="#{prov.nombre}"
+                                            itemValue="#{prov}"
+                                            converter="proveedorConverter"
+                                            forceSelection="true"
+                                            scrollHeight="250"
                                         />
+
                                         <p:commandButton
                                                 id="btnSeleccionarProv"
                                                 value="Seleccionar"
-                                                styleClass="ui-button"
                                                 process="@this acSimple"
-                                                update=":pnlDetalle :pnlTabla"
+                                                update="txtProveedor"
+                                                actionListener="#{compraFrm.btnSeleccionarProv}"
                                                 oncomplete="PF('dlg1').hide()"
                                         />
+
                                     </p:dialog>
 
                                     <p:outputLabel for="menuEstado" value="Estado:" />
@@ -182,7 +188,6 @@
                                             <p:column headerText="Monto">
                                                 #{d.precio * d.cantidad}
                                             </p:column>
-
                                         </p:dataTable>
                                     </h:form>
                                 </h:panelGrid>

@@ -10,24 +10,24 @@
     <h:head></h:head>
     <h:body>
         <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
-            <ui:define name="titulo">#{proveedorFrm.nombreBean}</ui:define>
+            <ui:define name="titulo">#{clienteFrm.nombreBean}</ui:define>
 
             <ui:define name="contenido">
-                <h1 class="tituloPagina">#{proveedorFrm.nombreBean}</h1>
+                <h1 class="tituloPagina">#{clienteFrm.nombreBean}</h1>
 
                 <h:panelGroup id="pnlTabla">
                     <h:panelGrid>
-                        <h:form id="frmTop" rendered="#{proveedorFrm.estado=='NADA'}">
+                        <h:form id="frmTop" rendered="#{clienteFrm.estado=='NADA'}">
                             <p:dataTable id="tabla-top"
                                          lazy="true"
-                                         rows="#{proveedorFrm.pageSize}"
+                                         rows="#{clienteFrm.pageSize}"
                                          paginator="true"
                                          paginatorPosition="bottom"
-                                         value="#{proveedorFrm.modelo}"
+                                         value="#{clienteFrm.modelo}"
                                          var="r"
                                          selectionMode="single"
-                                         selection="#{proveedorFrm.registro}" rowKey="#{r.id}">
-                                <p:ajax event="rowSelect" listener="#{proveedorFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                         selection="#{clienteFrm.registro}" rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{clienteFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
                                 <p:column>
                                     #{r.id}
                                     <f:facet name="header">ID</f:facet>
@@ -36,29 +36,24 @@
                                     #{r.nombre}
                                     <f:facet name="header">Nombre</f:facet>
                                 </p:column>
-
+                                <p:column>
+                                    #{r.dui}
+                                    <f:facet name="header">DUI</f:facet>
+                                </p:column>
                                 <p:column>
                                     #{r.nit}
                                     <f:facet name="header">NIT</f:facet>
                                 </p:column>
                                 <p:column>
-                                    #{r.razonSocial}
-                                    <f:facet name="header">Razón Social</f:facet>
-                                </p:column>
-                                <p:column>
                                     #{r.activo?"Activo":"Inactivo"}
                                     <f:facet name="header">Estado</f:facet>
-                                </p:column>
-                                <p:column>
-                                    #{r.observaciones}
-                                    <f:facet name="header">Observaciones</f:facet>
                                 </p:column>
                             </p:dataTable>
 
                             <p:commandButton
                                     id="btnNuevo"
-                                    value="Nuevo Proveedor"
-                                    actionListener="#{proveedorFrm.btnNuevoHandler}"
+                                    value="Nuevo Cliente"
+                                    actionListener="#{clienteFrm.btnNuevoHandler}"
                                     update=":pnlDetalle :pnlTabla"
                             />
 
@@ -73,44 +68,39 @@
                         <p:commandButton
                                 id="btnCancelar"
                                 value="Cancelar"
-                                actionListener="#{proveedorFrm.btnCancelarHandler}"
+                                actionListener="#{clienteFrm.btnCancelarHandler}"
                                 styleClass="ui-button-warning"
-                                rendered="#{proveedorFrm.estado!='NADA'}"
+                                rendered="#{clienteFrm.estado!='NADA'}"
                                 update=":pnlDetalle :pnlTabla"
-                                process="@this"
                         />
                     </h:form>
 
-                    <h:form id="frmCrear" rendered="#{proveedorFrm.estado!='NADA'}">
+                    <h:form id="frmCrear" rendered="#{clienteFrm.estado!='NADA'}">
                         <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" showSummary="false" closable="true" />
 
                         <h:panelGrid>
                             <p:outputLabel for="txtId" value="ID:"/>
-                            <p:inputText id="txtId" value="#{proveedorFrm.registro.id}" readonly="true"
+                            <p:inputText id="txtId" value="#{clienteFrm.registro.id}" readonly="true"
                                          disabled="true"/>
 
                             <p:outputLabel for="txtNombre" value="Nombre:"/>
-                            <p:inputText id="txtNombre" value="#{proveedorFrm.registro.nombre}" size="75"
+                            <p:inputText id="txtNombre" value="#{clienteFrm.registro.nombre}" size="75"
                                          required="true"/>
 
-                            <p:outputLabel for="txtNit" value="NIT:"/>
-                            <p:inputText id="txtNit" value="#{proveedorFrm.registro.nit}" size="75" />
+                            <p:outputLabel for="txtDui" value="DUI:"/>
+                            <p:inputText id="txtDui" value="#{clienteFrm.registro.dui}" size="75" required="true" />
 
-                            <p:outputLabel for="txtRazonSocial" value="Razón Social:"/>
-                            <p:inputText id="txtRazonSocial" value="#{proveedorFrm.registro.razonSocial}" size="75"/>
+                            <p:outputLabel for="txtNit" value="NIT:"/>
+                            <p:inputText id="txtNit" value="#{clienteFrm.registro.nit}" size="75" />
 
                             <p:outputLabel for="chkActivo" value="Activo:"/>
-                            <p:selectBooleanCheckbox id="chkActivo" value="#{proveedorFrm.registro.activo}"/>
-
-                            <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
-                            <p:inputTextarea id="txtObservaciones" value="#{proveedorFrm.registro.observaciones}"
-                                             size="80"/>
+                            <p:selectBooleanCheckbox id="chkActivo" value="#{clienteFrm.registro.activo}"/>
 
                             <p:commandButton
                                     id="btnGuardar"
                                     value="Guardar"
-                                    actionListener="#{proveedorFrm.btnGuardarHandler}"
-                                    rendered="#{proveedorFrm.estado=='CREAR'}"
+                                    actionListener="#{clienteFrm.btnGuardarHandler}"
+                                    rendered="#{clienteFrm.estado=='CREAR'}"
                                     process="@form"
                                     update=":pnlDetalle :pnlTabla"
                                     styleClass="ui-button-success"
@@ -119,8 +109,8 @@
                             <p:commandButton
                                     id="btnModificar"
                                     value="Modificar"
-                                    actionListener="#{proveedorFrm.btnModificarHandler}"
-                                    rendered="#{proveedorFrm.estado=='MODIFICAR'}"
+                                    actionListener="#{clienteFrm.btnModificarHandler}"
+                                    rendered="#{clienteFrm.estado=='MODIFICAR'}"
                                     styleClass="ui-button-secondary"
                                     process="@form"
                                     update=":pnlDetalle :pnlTabla "
@@ -129,8 +119,8 @@
                             <p:commandButton
                                     id="btnEliminar"
                                     value="Eliminar"
-                                    actionListener="#{proveedorFrm.btnEliminarHandler}"
-                                    rendered="#{proveedorFrm.estado=='MODIFICAR'}"
+                                    actionListener="#{clienteFrm.btnEliminarHandler}"
+                                    rendered="#{clienteFrm.estado=='MODIFICAR'}"
                                     styleClass="ui-button-danger"
                                     update=":frmTop :pnlDetalle :pnlTabla"
                             />

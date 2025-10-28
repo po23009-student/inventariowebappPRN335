@@ -1,32 +1,30 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
 
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ClienteDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ProveedorDAO;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Cliente;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Named
 @ViewScoped
-public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable {
+public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
     @Inject
     FacesContext facesContext;
 
     @Inject
-    ProveedorDAO proveedorDAO;
+    ClienteDAO clienteDAO;
 
-    private Proveedor proveedorSeleccionado;
-
-    public ProveedorFrm() {
-        this.nombreBean = "Proveedores";
+    public ClienteFrm() {
+        this.nombreBean = "Clientes";
     }
 
     @Override
@@ -35,19 +33,20 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     }
 
     @Override
-    protected InventarioDefaultDataAccess<Proveedor> getDAO() {
-        return proveedorDAO;
+    protected InventarioDefaultDataAccess<Cliente> getDAO() {
+        return clienteDAO;
     }
 
     @Override
-    protected Proveedor nuevoRegistro() {
+    protected Cliente nuevoRegistro() {
         @Valid
-        Proveedor nuevoProveedor = new Proveedor();
-        return nuevoProveedor;
+        Cliente nuevoCliente = new Cliente();
+        nuevoCliente.setId(UUID.randomUUID());
+        return nuevoCliente;
     }
 
     @Override
-    protected String getIdAsText(Proveedor r) {
+    protected String getIdAsText(Cliente r) {
         if (r != null && r.getId() != null) {
             return r.getId().toString();
         }
@@ -55,10 +54,10 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     }
 
     @Override
-    protected Proveedor getIdByText(String id) {
+    protected Cliente getIdByText(String id) {
         if (id != null && this.modelo != null && !this.modelo.getWrappedData().isEmpty()) {
             try {
-                Integer buscado = Integer.valueOf(id);
+                UUID buscado = UUID.fromString(id);
                 return this.modelo.getWrappedData().stream()
                         .filter(r -> r.getId() != null && r.getId().equals(buscado))
                         .findFirst()
@@ -69,21 +68,5 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
             }
         }
         return null;
-    }
-
-    public List<Proveedor> completeText(String query) {
-        String queryLowerCase = query.toLowerCase();
-        List<Proveedor> proveedores = proveedorDAO.findRange(0, Integer.MAX_VALUE);
-        return proveedores.stream()
-                .filter(p -> p.getActivo() && p.getNombre().toLowerCase().contains(queryLowerCase))
-                .collect(Collectors.toList());
-    }
-
-    public Proveedor getProveedorSeleccionado() {
-        return proveedorSeleccionado;
-    }
-
-    public void setProveedorSeleccionado(Proveedor proveedorSeleccionado) {
-        this.proveedorSeleccionado = proveedorSeleccionado;
     }
 }
