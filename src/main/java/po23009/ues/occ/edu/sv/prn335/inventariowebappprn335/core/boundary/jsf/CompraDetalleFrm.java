@@ -1,23 +1,27 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.Dependent;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDetalleDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ProductoDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-@Dependent
+
 @Named
+@ViewScoped
 public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Serializable {
     @Inject
     FacesContext facesContext;
@@ -25,14 +29,23 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     @Inject
     CompraDetalleDAO compraDetalleDAO;
 
-    private List<CompraDetalle> detalles;
+    @Inject
+    CompraFrm compraFrm;
 
-    public void cargarDetalles(Long idCompra) {
-        this.detalles = compraDetalleDAO.obtenerPorCompra(idCompra);
-    }
+    @Inject
+    ProductoDAO productoDAO;
+
+    private List<Producto> listaProductos;
+    private Producto productoSeleccionado;
 
     public CompraDetalleFrm() {
-        this.nombreBean = "Compras";
+
+    }
+
+    @PostConstruct
+    public void init() {
+        listaProductos = productoDAO.getListaProductos();
+        this.nombreBean = "Compra Detalle";
     }
 
     @Override
@@ -48,6 +61,9 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     @Override
     protected CompraDetalle nuevoRegistro() {
         CompraDetalle nuevaCompraDetalle = new CompraDetalle();
+        nuevaCompraDetalle.setId(UUID.randomUUID());
+        nuevaCompraDetalle.setIdCompra(compraFrm.getRegistro());
+        nuevaCompraDetalle.setIdProducto(null);
         return nuevaCompraDetalle;
     }
 
@@ -76,11 +92,64 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
         return null;
     }
 
-    public List<CompraDetalle> getDetalles() {
-        return detalles;
+    @Override
+    public void btnEliminarHandler(ActionEvent event) {
+        getDAO().eliminar(this.registro);
+        getFacesContext().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Registro eliminado", "El registro fue eliminado"));
+        getFacesContext().getExternalContext().getFlash().setKeepMessages(true);
+        compraFrm.cargarDetallesCompra();
+        inicializarRegistros();
     }
 
-    public void setDetalles(List<CompraDetalle> detalles) {
-        this.detalles = detalles;
+    @Override
+    public void btnGuardarHandler(ActionEvent event) {
+        if (productoSeleccionado == null || productoSeleccionado.getId() == null) {
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar un producto válido"));
+            return; // Evita persistir un producto inválido
+        }
+
+        registro.setIdProducto(productoSeleccionado);
+        getDAO().crear(registro);
+
+        facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro creado", "Detalle creado correctamente"));
+        facesContext.getExternalContext().getFlash().setKeepMessages(true);
+
+        registro = null;
+        productoSeleccionado = null;
+        estado = ESTADO_CRUD.NADA;
+
+        compraFrm.cargarDetallesCompra();
+        modelo = null;
+    }
+
+    @Override
+    public void btnModificarHandler(ActionEvent actionEvent) {
+        try {
+            this.getDAO().modificar(this.registro);
+            getFacesContext().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro modificado", "El registro fue modificado exitosamente"));
+            getFacesContext().getExternalContext().getFlash().setKeepMessages(true);
+            this.estado = ESTADO_CRUD.NADA;
+            this.modelo = null;
+            inicializarRegistros();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al modificar", e.getMessage()));
+        }
+    }
+
+    public List<Producto> getListaProductos() {
+        return listaProductos;
+    }
+
+    public void setListaProductos(List<Producto> listaProductos) {
+        this.listaProductos = listaProductos;
+    }
+
+    public Producto getProductoSeleccionado() {
+        return productoSeleccionado;
+    }
+
+    public void setProductoSeleccionado(Producto productoSeleccionado) {
+        this.productoSeleccionado = productoSeleccionado;
     }
 }

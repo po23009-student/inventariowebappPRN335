@@ -5,14 +5,16 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.event.SelectEvent;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDetalleDAO;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Named
@@ -27,18 +29,32 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     @Inject
     private CompraDetalleDAO compraDetalleDAO;
 
-    @Inject
-    private CompraDetalleFrm cDetalleFrm;
-
-    @Inject
-    private ProveedorFrm proveedorFrm;
-
+    private List<CompraDetalle> detallesPorCompra;
     private Proveedor proveedorSeleccionado;
-
-    private List<CompraDetalle> detallesCompra;
 
     public CompraFrm() {
         this.nombreBean = "Compras";
+    }
+
+    public List<CompraDetalle> getDetallesPorCompra() {
+        return detallesPorCompra;
+    }
+
+    public void cargarDetallesCompra() {
+        if (registro != null && registro.getId() != null) {
+            detallesPorCompra = compraDetalleDAO.findByCompra(registro.getId());
+        } else {
+            detallesPorCompra = null;
+        }
+    }
+
+    @Override
+    public void selectionHandler(SelectEvent<Compra> r) {
+        if (r != null) {
+            this.registro = r.getObject();
+            this.estado = ESTADO_CRUD.MODIFICAR;
+            cargarDetallesCompra();
+        }
     }
 
     @Override
@@ -54,6 +70,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     @Override
     protected Compra nuevoRegistro() {
         Compra nuevaCompra = new Compra();
+        nuevaCompra.setId(compraDAO.obtenerSiguienteId());
         return nuevaCompra;
     }
 
@@ -89,14 +106,6 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         this.estado = ESTADO_CRUD.NADA;
     }
 
-    public void cargarDetallesCompra(Compra compraSeleccionada) {
-        if (compraSeleccionada != null && compraSeleccionada.getId() != null) {
-            this.detallesCompra = compraDetalleDAO.obtenerPorCompra(compraSeleccionada.getId());
-        } else {
-            this.detallesCompra = null;
-        }
-    }
-
     public void btnSeleccionarProv(ActionEvent actionEvent) {
         if (proveedorSeleccionado != null) {
             this.registro.setProveedor(proveedorSeleccionado);
@@ -106,31 +115,6 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         }
     }
 
-    public List<CompraDetalle> getDetallesCompra() {
-        return detallesCompra;
-    }
-
-    public void setDetallesCompra(List<CompraDetalle> detallesCompra) {
-        this.detallesCompra = detallesCompra;
-    }
-
-    public CompraDetalleFrm getcDetalleFrm() {
-        return cDetalleFrm;
-    }
-
-    public void setcDetalleFrm(CompraDetalleFrm cDetalleFrm) {
-        this.cDetalleFrm = cDetalleFrm;
-    }
-
-    public ProveedorFrm getProveedorFrm() {
-        return proveedorFrm;
-    }
-
-    public void setProveedorFrm(ProveedorFrm proveedorFrm) {
-        this.proveedorFrm = proveedorFrm;
-    }
-
-
     public Proveedor getProveedorSeleccionado() {
         return proveedorSeleccionado;
     }
@@ -139,4 +123,11 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         this.proveedorSeleccionado = proveedorSeleccionado;
     }
 
+    public CompraDetalleDAO getCompraDetalleDAO() {
+        return compraDetalleDAO;
+    }
+
+    public void setCompraDetalleDAO(CompraDetalleDAO compraDetalleDAO) {
+        this.compraDetalleDAO = compraDetalleDAO;
+    }
 }

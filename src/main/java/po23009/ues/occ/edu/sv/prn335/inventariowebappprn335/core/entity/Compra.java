@@ -9,8 +9,8 @@ import java.time.OffsetDateTime;
 @Table(name = "compra")
 public class Compra {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_compra", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_compra")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

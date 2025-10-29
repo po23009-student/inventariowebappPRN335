@@ -27,7 +27,7 @@ public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Seriali
     TipoUnidadMedidaFrm tipoUMFrm;
 
     public UnidadMedidaFrm() {
-        this.nombreBean = "Clientes";
+        this.nombreBean = "Unidades de Medida";
     }
 
     @Override

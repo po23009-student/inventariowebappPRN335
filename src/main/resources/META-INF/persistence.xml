@@ -5,7 +5,6 @@
              version="3.2">
     <persistence-unit name="inventarioPU" transaction-type="JTA">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-
         <jta-data-source>jdbc/pgdb</jta-data-source>
     </persistence-unit>
 </persistence>

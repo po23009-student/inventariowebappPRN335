@@ -45,6 +45,10 @@
                                     <f:facet name="header">Estado</f:facet>
                                 </p:column>
                                 <p:column>
+                                    $ #{compraFrm.compraDetalleDAO.calcularMontoByCompra(r.id).setScale(2)}
+                                    <f:facet name="header">Monto</f:facet>
+                                </p:column>
+                                <p:column>
                                     #{r.observaciones}
                                     <f:facet name="header">Observaciones</f:facet>
                                 </p:column>
@@ -121,8 +125,17 @@
                                         <f:selectItem itemLabel="ANULADA" itemValue="ANULADA" />
                                     </p:selectOneMenu>
 
-                                    <p:outputLabel for="txtFecha" value="Fecha:" />
-                                    <p:inputText id="txtFecha" value="#{compraFrm.registro.fecha}" size="75" />
+                                    <p:outputLabel for="dpFecha" value="Fecha"/>
+                                    <p:datePicker id="dpFecha"
+                                                  value="#{compraFrm.registro.fecha}"
+                                                  showTime="true"
+                                                  hourFormat="24"
+                                                  timeInput="true"
+                                                  timeZone="America/El_Salvador"
+                                                  pattern="yyyy-MM-dd'T'HH:mm"
+                                                  converter="offsetDateTimeConverter"
+                                                  requiredMessage="La fecha es obligatoria"
+                                                  touchUI="false" />
 
                                     <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
                                     <p:inputTextarea id="txtObservaciones" value="#{compraFrm.registro.observaciones}" size="80"/>
@@ -157,43 +170,8 @@
                             </h:form>
                         </p:tab>
 
-                        <p:tab closable="false" title="Detalles de Compra" disabled="#{compraFrm.estado!='MODIFICAR'}">
-                            <h:panelGroup id="pnlCompraDetalle">
-                                <h:panelGrid>
-                                    <h:form id="frmTablaDetalleCompra">
-                                        <p:dataTable
-                                                id="tablaDetalles"
-                                                value="#{compraFrm.cDetalleFrm.detalles}"
-                                                var="d"
-                                                lazy="true"
-                                                rows="#{compraFrm.cDetalleFrm.pageSize}"
-                                                paginator="true"
-                                                paginatorPosition="bottom"
-                                                selectionMode="single"
-                                                selection="#{compraFrm.cDetalleFrm.registro}" rowKey="#{d.id}"
-                                        >
-                                            <p:column headerText="Producto">
-                                                #{d.idProducto.nombreProducto}
-                                            </p:column>
-                                            <p:column headerText="Cantidad">
-                                                #{d.cantidad}
-                                            </p:column>
-                                            <p:column headerText="Precio Unitario">
-                                                #{d.precio}
-                                            </p:column>
-                                            <p:column headerText="Estado">
-                                                #{d.estado}
-                                            </p:column>
-                                            <p:column headerText="Observaciones">
-                                                #{d.observaciones}
-                                            </p:column>
-                                            <p:column headerText="Monto">
-                                                #{d.precio * d.cantidad}
-                                            </p:column>
-                                        </p:dataTable>
-                                    </h:form>
-                                </h:panelGrid>
-                            </h:panelGroup>
+                        <p:tab id="pnlDetalleCompra" closable="false" title="Detalles de Compra" disabled="#{compraFrm.estado!='MODIFICAR'}">
+                            <ui:include src="CompraDetalle.xhtml" />
                         </p:tab>
                     </p:tabView>
                 </h:panelGroup>

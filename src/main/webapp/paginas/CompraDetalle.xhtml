@@ -1,0 +1,120 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="jakarta.faces.html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:form id="frmCompraDetalleCompleto">
+
+        <h:panelGroup id="pnlCompraDetalles" layout="block">
+
+            <h:panelGroup id="pnlTablaDetallesCompra" rendered="#{compraDetalleFrm.estado=='NADA'}">
+                <p:dataTable
+                        id="tablaDetallesCompra"
+                        var="cd"
+                        value="#{compraFrm.detallesPorCompra}"
+                        selectionMode="single" selection="#{compraDetalleFrm.registro}"
+                        rowKey="#{cd.id}"
+                        paginator="true"
+                        paginatorPosition="bottom"
+                        rows="#{compraDetalleFrm.pageSize}"
+                        emptyMessage="No hay detalles registrados para esta compra">
+
+                    <p:ajax event="rowSelect" listener="#{compraDetalleFrm.selectionHandler}" update="pnlCompraDetalles" />
+
+                    <p:column headerText="ID">#{cd.id}</p:column>
+                    <p:column headerText="Producto">#{cd.idProducto.nombreProducto}</p:column>
+                    <p:column headerText="Cantidad">#{cd.cantidad}</p:column>
+                    <p:column headerText="Precio">#{cd.precio}</p:column>
+                    <p:column headerText="Estado">#{cd.estado}</p:column>
+                    <p:column headerText="Observaciones">#{cd.observaciones}</p:column>
+                </p:dataTable>
+
+                <p:commandButton
+                        id="btnNuevo"
+                        value="Nuevo Detalle de Compra"
+                        styleClass="ui-button"
+                        actionListener="#{compraDetalleFrm.btnNuevoHandler}"
+                        process="@this"
+                        update="pnlCompraDetalles"/>
+
+                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" closable="true"/>
+            </h:panelGroup>
+
+            <h:panelGroup id="pnlDetalleComprasDetalle" rendered="#{compraDetalleFrm.estado!='NADA'}">
+                <p:commandButton
+                        id="btnCancelar"
+                        value="Cancelar Compra Detalle"
+                        actionListener="#{compraDetalleFrm.btnCancelarHandler}"
+                        styleClass="ui-button-warning"
+                        process="@this"
+                        update="pnlCompraDetalles"
+                />
+
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel for="txtId" value="ID:"/>
+                    <p:inputText id="txtId" value="#{compraDetalleFrm.registro.id}" readonly="true" disabled="true"/>
+
+                    <p:outputLabel for="soProducto" value="Producto:"/>
+                   <p:selectOneMenu id="soProducto"
+                                     value="#{compraDetalleFrm.productoSeleccionado}"
+                                     converter="productoConverter"
+                                     required="true"
+                                     requiredMessage="Debe seleccionar un producto"
+                   >
+                       <f:selectItems value="#{compraDetalleFrm.listaProductos}"
+                                       var="p"
+                                       itemLabel="#{p.nombreProducto}"
+                                       itemValue="#{p}"
+                       />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="txtCantidad" value="Cantidad:"/>
+                    <p:inputText id="txtCantidad" value="#{compraDetalleFrm.registro.cantidad}" size="75"/>
+
+                    <p:outputLabel for="txtPrecio" value="Precio:"/>
+                    <p:inputText id="txtPrecio" value="#{compraDetalleFrm.registro.precio}" size="75"/>
+
+                    <p:outputLabel for="menuEstado" value="Estado:" />
+                    <p:selectOneMenu id="menuEstado" value="#{compraDetalleFrm.registro.estado}">
+                        <f:selectItem itemLabel="ORDEN" itemValue="ORDEN" />
+                        <f:selectItem itemLabel="CREADA" itemValue="CREADA" />
+                        <f:selectItem itemLabel="APROBADA" itemValue="APROBADA" />
+                        <f:selectItem itemLabel="RECHAZADA" itemValue="RECHAZADA" />
+                        <f:selectItem itemLabel="ANULADA" itemValue="ANULADA" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
+                    <p:inputTextarea id="txtObservaciones" value="#{compraDetalleFrm.registro.observaciones}" cols="60" rows="3"/>
+                </h:panelGrid>
+
+                <p:commandButton
+                        id="btnGuardar"
+                        value="Guardar Compra Detalle"
+                        actionListener="#{compraDetalleFrm.btnGuardarHandler}"
+                        rendered="#{compraDetalleFrm.estado=='CREAR'}"
+                        process="@form"
+                        styleClass="ui-button-success"
+                        update="pnlCompraDetalles"/>
+
+                <p:commandButton
+                        id="btnModificar"
+                        value="Modificar Compra Detalle"
+                        actionListener="#{compraDetalleFrm.btnModificarHandler}"
+                        rendered="#{compraDetalleFrm.estado=='MODIFICAR'}"
+                        process="@form"
+                        styleClass="ui-button-secondary"
+                        update="pnlCompraDetalles"/>
+
+                <p:commandButton
+                        id="btnEliminar"
+                        value="Eliminar Compra Detalle"
+                        actionListener="#{compraDetalleFrm.btnEliminarHandler}"
+                        rendered="#{compraDetalleFrm.estado=='MODIFICAR'}"
+                        styleClass="ui-button-danger"
+                        update="pnlCompraDetalles"/>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</ui:composition>

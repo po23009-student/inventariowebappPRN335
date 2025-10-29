@@ -99,6 +99,7 @@ public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida> implements
         }
     }
 
+    @Override
     public void btnEliminarHandler(ActionEvent event) {
         if (unidadSeleccionada != null) {
             unidadMedidaDAO.eliminar(unidadSeleccionada);
@@ -108,11 +109,7 @@ public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida> implements
     }
 
     public void btnGuardarUnidadHandler(ActionEvent event) {
-        if (unidadActual.getId() == null) {
-            unidadMedidaDAO.crear(unidadActual);
-        } else {
-            unidadMedidaDAO.modificar(unidadActual);
-        }
+        unidadMedidaDAO.crear(unidadActual);
         cargarUnidadesPorTipo();
     }
 

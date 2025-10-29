@@ -7,9 +7,7 @@ import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ClienteDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ProveedorDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Cliente;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 
 import java.io.Serializable;
 import java.util.UUID;

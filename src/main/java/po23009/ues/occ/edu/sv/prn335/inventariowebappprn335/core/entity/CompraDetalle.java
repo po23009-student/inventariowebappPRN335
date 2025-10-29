@@ -1,6 +1,7 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class CompraDetalle {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_producto")
+    @NotNull(message = "Debe seleccionar un producto")
     private Producto idProducto;
 
     @Column(name = "cantidad", precision = 8, scale = 2)
@@ -33,6 +35,7 @@ public class CompraDetalle {
     @Lob
     @Column(name = "observaciones")
     private String observaciones;
+
 
     public UUID getId() {
         return id;
