@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+>
+<f:view>
+    <h:head></h:head>
+    <h:body>
+        <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+            <ui:define name="titulo">#{productoFrm.nombreBean}</ui:define>
+
+            <ui:define name="contenido">
+                <h1 class="tituloPagina">#{productoFrm.nombreBean}</h1>
+
+                <h:panelGroup id="pnlTabla">
+                    <h:panelGrid>
+                        <h:form id="frmTop" rendered="#{productoFrm.estado=='NADA'}">
+                            <p:dataTable id="tabla-top"
+                                         lazy="true"
+                                         rows="#{productoFrm.pageSize}"
+                                         paginator="true"
+                                         paginatorPosition="bottom"
+                                         value="#{productoFrm.modelo}"
+                                         var="r"
+                                         selectionMode="single"
+                                         selection="#{productoFrm.registro}" rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{productoFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                <p:column>
+                                    #{r.id}
+                                    <f:facet name="header">ID</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.nombreProducto}
+                                    <f:facet name="header">Nombre</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.activo?"Activo":"Inactivo"}
+                                    <f:facet name="header">Estado</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.referenciaExterna}
+                                    <f:facet name="header">Referencia Externa</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.comentarios}
+                                    <f:facet name="header">Comentarios</f:facet>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton
+                                    id="btnNuevo"
+                                    value="Nuevo Producto"
+                                    actionListener="#{productoFrm.btnNuevoHandler}"
+                                    update=":pnlDetalle :pnlTabla"
+                            />
+
+                            <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+                        </h:form>
+
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup id="pnlDetalle">
+                    <h:form>
+                        <p:commandButton
+                                id="btnCancelar"
+                                value="Cancelar"
+                                actionListener="#{productoFrm.btnCancelarHandler}"
+                                styleClass="ui-button-warning"
+                                rendered="#{productoFrm.estado!='NADA'}"
+                                update=":pnlDetalle :pnlTabla"
+                                process="@this"
+                        />
+                    </h:form>
+
+                    <p:tabView id="tabProducto" cache="false" dynamic="true" rendered="#{productoFrm.estado!='NADA'}">
+                        <p:tab closable="false" title="Generalidades">
+                            <h:form id="frmCrear">
+                                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+
+                                <h:panelGrid>
+                                    <p:outputLabel for="txtId" value="ID:" />
+                                    <p:inputText id="txtId" value="#{productoFrm.registro.id}" readonly="true" disabled="true"/>
+
+                                    <p:outputLabel for="txtNombreProducto" value="Nombre:" />
+                                    <p:inputText id="txtNombreProducto" value="#{productoFrm.registro.nombreProducto}"/>
+
+                                    <p:outputLabel for="txtRefExterna" value="Referencia Externa:"/>
+                                    <p:inputText id="txtRefExterna" value="#{productoFrm.registro.referenciaExterna}" size="75"/>
+
+                                    <p:outputLabel for="chkActivo" value="Activo:"/>
+                                    <p:selectBooleanCheckbox id="chkActivo" value="#{productoFrm.registro.activo}"/>
+
+                                    <p:outputLabel for="txtComentarios" value="Comentarios:"/>
+                                    <p:inputTextarea id="txtComentarios" value="#{productoFrm.registro.comentarios}" size="80"/>
+
+                                    <p:commandButton
+                                            id="btnGuardar"
+                                            value="Guardar"
+                                            actionListener="#{productoFrm.btnGuardarHandler}"
+                                            rendered="#{productoFrm.estado=='CREAR'}"
+                                            process="@form"
+                                            update=":pnlDetalle :pnlTabla"
+                                            styleClass="ui-button-success"
+                                    />
+
+                                    <p:commandButton
+                                            id="btnModificar"
+                                            value="Modificar"
+                                            actionListener="#{productoFrm.btnModificarHandler}"
+                                            rendered="#{productoFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-secondary"
+                                            process="@form"
+                                            update=":pnlDetalle :pnlTabla "
+                                    />
+
+                                    <p:commandButton
+                                            id="btnEliminar"
+                                            value="Eliminar"
+                                            actionListener="#{productoFrm.btnEliminarHandler}"
+                                            rendered="#{productoFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-danger"
+                                            update=":frmTop :pnlDetalle :pnlTabla"
+                                    />
+                                </h:panelGrid>
+                            </h:form>
+                        </p:tab>
+
+                        <p:tab id="pnlTipoProducto" closable="false" title="Tipos de Producto" disabled="#{productoFrm.estado!='MODIFICAR'}">
+
+                        </p:tab>
+                    </p:tabView>
+                </h:panelGroup>
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</f:view>
+</html>

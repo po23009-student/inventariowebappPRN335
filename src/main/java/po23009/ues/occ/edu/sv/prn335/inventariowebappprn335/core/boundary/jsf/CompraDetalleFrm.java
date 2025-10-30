@@ -106,7 +106,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
         if (productoSeleccionado == null || productoSeleccionado.getId() == null) {
             facesContext.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar un producto válido"));
-            return; // Evita persistir un producto inválido
+            return;
         }
 
         registro.setIdProducto(productoSeleccionado);

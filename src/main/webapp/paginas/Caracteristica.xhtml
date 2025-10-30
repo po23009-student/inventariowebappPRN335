@@ -10,10 +10,135 @@
     <h:head></h:head>
     <h:body>
         <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
-            <ui:define name="titulo">#{compraFrm.nombreBean}</ui:define>
+            <ui:define name="titulo">#{caracteristicaFrm.nombreBean}</ui:define>
 
             <ui:define name="contenido">
+                <h1 class="tituloPagina">#{caracteristicaFrm.nombreBean}</h1>
 
+                <h:panelGroup id="pnlTabla">
+                    <h:panelGrid>
+                        <h:form id="frmTop" rendered="#{caracteristicaFrm.estado=='NADA'}">
+                            <p:dataTable id="tabla-top"
+                                         lazy="true"
+                                         rows="#{caracteristicaFrm.pageSize}"
+                                         paginator="true"
+                                         paginatorPosition="bottom"
+                                         value="#{caracteristicaFrm.modelo}"
+                                         var="r"
+                                         selectionMode="single"
+                                         selection="#{caracteristicaFrm.registro}" rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{caracteristicaFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                <p:column>
+                                    #{r.id}
+                                    <f:facet name="header">ID</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.nombre}
+                                    <f:facet name="header">Nombre</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{caracteristicaFrm.tumDAO.getTipoUnidadMedidaPorCaracteristica(r).nombre}
+                                    <f:facet name="header">Tipo de Unidad de Medida</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.activo?"Activo":"Inactivo"}
+                                    <f:facet name="header">Estado</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.descripcion}
+                                    <f:facet name="header">Descripcion</f:facet>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton
+                                    id="btnNuevo"
+                                    value="Nueva Caracteristica"
+                                    actionListener="#{caracteristicaFrm.btnNuevoHandler}"
+                                    update=":pnlDetalle :pnlTabla"
+                            />
+
+                            <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+                        </h:form>
+
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup id="pnlDetalle">
+                    <h:form>
+                        <p:commandButton
+                                id="btnCancelar"
+                                value="Cancelar"
+                                actionListener="#{caracteristicaFrm.btnCancelarHandler}"
+                                styleClass="ui-button-warning"
+                                rendered="#{caracteristicaFrm.estado!='NADA'}"
+                                update=":pnlDetalle :pnlTabla"
+                                process="@this"
+                        />
+                    </h:form>
+
+                    <h:form id="frmCrear" rendered="#{caracteristicaFrm.estado!='NADA'}">
+                        <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+
+                        <h:panelGrid>
+                            <p:outputLabel for="txtId" value="ID:"/>
+                            <p:inputText id="txtId" value="#{caracteristicaFrm.registro.id}" readonly="true"
+                                         disabled="true"/>
+
+                            <p:outputLabel for="txtNombre" value="Nombre:"/>
+                            <p:inputText id="txtNombre" value="#{caracteristicaFrm.registro.nombre}" size="75"
+                                         required="true"/>
+
+                            <p:outputLabel for="chkActivo" value="Activo:"/>
+                            <p:selectBooleanCheckbox id="chkActivo" value="#{caracteristicaFrm.registro.activo}"/>
+
+                            <p:outputLabel for="soTipoUnidadMedida" value="Tipo:"/>
+
+                            <p:selectOneMenu id="soTipoUnidadMedida"
+                                             value="#{caracteristicaFrm.tipoUnidadMedidaSeleccionada}"
+                                             converter="tipoUMConverter"
+                                             required="true"
+                                             requiredMessage="Debe seleccionar un tipo">
+                                <f:selectItems value="#{caracteristicaFrm.listaTiposUnidadMedida}"
+                                               var="tu"
+                                               itemLabel="#{tu.nombre}"
+                                               itemValue="#{tu}" />
+                            </p:selectOneMenu>
+
+
+                            <p:outputLabel for="txtDescripcion" value="Descripción:"/>
+                            <p:inputTextarea id="txtDescripcion" value="#{caracteristicaFrm.registro.descripcion}"
+                                             size="80"/>
+
+                            <p:commandButton
+                                    id="btnGuardar"
+                                    value="Guardar"
+                                    actionListener="#{caracteristicaFrm.btnGuardarHandler}"
+                                    rendered="#{caracteristicaFrm.estado=='CREAR'}"
+                                    process="@form"
+                                    update=":pnlDetalle :pnlTabla"
+                                    styleClass="ui-button-success"
+                            />
+
+                            <p:commandButton
+                                    id="btnModificar"
+                                    value="Modificar"
+                                    actionListener="#{caracteristicaFrm.btnModificarHandler}"
+                                    rendered="#{caracteristicaFrm.estado=='MODIFICAR'}"
+                                    styleClass="ui-button-secondary"
+                                    process="@form"
+                                    update=":pnlDetalle :pnlTabla "
+                            />
+
+                            <p:commandButton
+                                    id="btnEliminar"
+                                    value="Eliminar"
+                                    actionListener="#{caracteristicaFrm.btnEliminarHandler}"
+                                    rendered="#{caracteristicaFrm.estado=='MODIFICAR'}"
+                                    styleClass="ui-button-danger"
+                                    update=":frmTop :pnlDetalle :pnlTabla"
+                            />
+                        </h:panelGrid>
+                    </h:form>
+                </h:panelGroup>
             </ui:define>
 
         </ui:composition>

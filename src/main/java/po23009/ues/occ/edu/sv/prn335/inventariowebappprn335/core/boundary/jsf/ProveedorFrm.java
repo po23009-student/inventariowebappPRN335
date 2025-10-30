@@ -1,7 +1,6 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
 
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;

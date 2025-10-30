@@ -4,6 +4,9 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
 
 import java.io.Serializable;
@@ -25,8 +28,12 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto> implement
     }
 
     public List<Producto> getListaProductos() {
-        return em.createQuery("SELECT p FROM Producto p", Producto.class)
-                .getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Producto> cq = cb.createQuery(Producto.class);
+        Root<Producto> producto = cq.from(Producto.class);
+        cq.select(producto);
+
+        return em.createQuery(cq).getResultList();
     }
 
     public Optional<Producto> findById(Long id) {
