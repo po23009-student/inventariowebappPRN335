@@ -14,7 +14,6 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDe
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Named
@@ -109,7 +108,6 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     public void btnSeleccionarProv(ActionEvent actionEvent) {
         if (proveedorSeleccionado != null) {
             this.registro.setProveedor(proveedorSeleccionado);
-            System.out.println("Proveedor seleccionado: " + proveedorSeleccionado.getNombre());
         } else {
             System.out.println("No se seleccionó ningún proveedor");
         }

@@ -15,7 +15,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-@FacesConverter(value = "offsetDateTimeConverter", managed = true)
+@FacesConverter(value = "offsetDateTimeConverter")
 public class OffsetDateTimeConverter implements Converter<OffsetDateTime> {
 
     private static final DateTimeFormatter FMT_WITH_OFFSET =

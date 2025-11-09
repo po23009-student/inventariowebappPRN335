@@ -28,10 +28,6 @@ public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor> impleme
         return em;
     }
 
-    public Proveedor buscarPorId(Integer id) {
-        return em.find(Proveedor.class, id);
-    }
-
     public Proveedor find(Integer id)  {
         return em.find(Proveedor.class, id);
     }

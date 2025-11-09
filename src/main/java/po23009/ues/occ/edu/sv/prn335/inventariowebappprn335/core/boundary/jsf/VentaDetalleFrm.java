@@ -1,7 +1,6 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.Dependent;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
@@ -11,26 +10,26 @@ import jakarta.inject.Named;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDetalleDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ProductoDAO;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.VentaDetalleDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.VentaDetalle;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-
 @Named
 @ViewScoped
-public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Serializable {
+public class VentaDetalleFrm extends DefaultFrm<VentaDetalle> implements Serializable {
     @Inject
     FacesContext facesContext;
 
     @Inject
-    CompraDetalleDAO compraDetalleDAO;
+    VentaDetalleDAO ventaDetalleDAO;
 
     @Inject
-    CompraFrm compraFrm;
+    VentaFrm ventaFrm;
 
     @Inject
     ProductoDAO productoDAO;
@@ -38,14 +37,14 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     private List<Producto> listaProductos;
     private Producto productoSeleccionado;
 
-    public CompraDetalleFrm() {
+    public VentaDetalleFrm() {
 
     }
 
     @PostConstruct
     public void init() {
-        listaProductos = productoDAO.findRange(0, Integer.MAX_VALUE);
-        this.nombreBean = "Detalles de Compra";
+        this.listaProductos = productoDAO.findRange(0, Integer.MAX_VALUE);
+        this.nombreBean = "Detalles de Venta";
     }
 
     @Override
@@ -54,21 +53,21 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     }
 
     @Override
-    protected InventarioDefaultDataAccess<CompraDetalle> getDAO() {
-        return compraDetalleDAO;
+    protected InventarioDefaultDataAccess<VentaDetalle> getDAO() {
+        return ventaDetalleDAO;
     }
 
     @Override
-    protected CompraDetalle nuevoRegistro() {
-        CompraDetalle nuevaCompraDetalle = new CompraDetalle();
-        nuevaCompraDetalle.setId(UUID.randomUUID());
-        nuevaCompraDetalle.setIdCompra(compraFrm.getRegistro());
-        nuevaCompraDetalle.setIdProducto(null);
-        return nuevaCompraDetalle;
+    protected VentaDetalle nuevoRegistro() {
+        VentaDetalle nuevaVentaDetalle = new VentaDetalle();
+        nuevaVentaDetalle.setId(UUID.randomUUID());
+        nuevaVentaDetalle.setIdVenta(ventaFrm.getRegistro());
+        nuevaVentaDetalle.setIdProducto(null);
+        return nuevaVentaDetalle;
     }
 
     @Override
-    protected String getIdAsText(CompraDetalle r) {
+    protected String getIdAsText(VentaDetalle r) {
         if (r != null && r.getId() != null) {
             return r.getId().toString();
         }
@@ -76,7 +75,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     }
 
     @Override
-    protected CompraDetalle getIdByText(String id) {
+    protected VentaDetalle getIdByText(String id) {
         if (id != null && this.modelo != null && !this.modelo.getWrappedData().isEmpty()) {
             try {
                 UUID buscado = UUID.fromString(id);
@@ -97,7 +96,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
         getDAO().eliminar(this.registro);
         getFacesContext().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Registro eliminado", "El registro fue eliminado"));
         getFacesContext().getExternalContext().getFlash().setKeepMessages(true);
-        compraFrm.cargarDetallesCompra();
+        ventaFrm.cargarDetallesVenta();
         inicializarRegistros();
     }
 
@@ -119,7 +118,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
         productoSeleccionado = null;
         estado = ESTADO_CRUD.NADA;
 
-        compraFrm.cargarDetallesCompra();
+        ventaFrm.cargarDetallesVenta();
         modelo = null;
     }
 

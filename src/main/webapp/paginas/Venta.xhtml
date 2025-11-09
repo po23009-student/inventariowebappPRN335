@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+>
+<f:view>
+    <h:head></h:head>
+    <h:body>
+        <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+            <ui:define name="titulo">#{ventaFrm.nombreBean}</ui:define>
+
+            <ui:define name="contenido">
+                <h1 class="tituloPagina">#{ventaFrm.nombreBean}</h1>
+
+                <h:panelGroup id="pnlTabla" >
+                    <h:panelGrid>
+                        <h:form id="frmTop" rendered="#{ventaFrm.estado=='NADA'}">
+                            <p:dataTable id="tabla-top"
+                                         lazy="true"
+                                         rows="#{ventaFrm.pageSize}"
+                                         paginator="true"
+                                         paginatorPosition="bottom"
+                                         value="#{ventaFrm.modelo}"
+                                         var="r"
+                                         selectionMode="single"
+                                         selection="#{ventaFrm.registro}" rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{ventaFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                <p:column>
+                                    #{r.id}
+                                    <f:facet name="header">ID</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.idCliente.nombre}
+                                    <f:facet name="header">Cliente</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.fecha}
+                                    <f:facet name="header">Fecha</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.estado}
+                                    <f:facet name="header">Estado</f:facet>
+                                </p:column>
+                                <p:column>
+                                    $ #{ventaFrm.ventaDetalleDAO.calcularMontoByVenta(r.id).setScale(2)}
+                                    <f:facet name="header">Monto</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.observaciones}
+                                    <f:facet name="header">Observaciones</f:facet>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton
+                                    id="btnNuevo"
+                                    value="Nueva Venta"
+                                    actionListener="#{ventaFrm.btnNuevoHandler}"
+                                    update=":pnlDetalle :pnlTabla"
+                            />
+
+                            <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+                        </h:form>
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup id="pnlDetalle">
+                    <h:form>
+                        <p:commandButton
+                                id="btnCancelar"
+                                value="Cancelar"
+                                actionListener="#{ventaFrm.btnCancelarHandler}"
+                                styleClass="ui-button-warning"
+                                rendered="#{ventaFrm.estado!='NADA'}"
+                                update=":pnlDetalle :pnlTabla"
+                        />
+                    </h:form>
+
+                    <p:tabView id="tabVenta" cache="false" dynamic="true" rendered="#{ventaFrm.estado!='NADA'}">
+                        <p:tab closable="false" title="Generalidades">
+                            <h:form id="frmCrear">
+                                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+
+                                <h:panelGrid>
+                                    <p:outputLabel for="txtId" value="ID:" />
+                                    <p:inputText id="txtId" value="#{ventaFrm.registro.id}" readonly="true" disabled="true"/>
+
+                                    <p:outputLabel for="txtCliente" value="Cliente:" />
+                                    <p:inputText id="txtCliente" value="#{ventaFrm.clienteSeleccionado.nombre}" readonly="true"/>
+
+                                    <p:commandButton value="Seleccionar" type="button" icon="pi pi-external-link" onclick="PF('dlg1').show()"/>
+
+                                    <p:dialog header="Seleccionar Cliente" widgetVar="dlg1" minHeight="10" width="350" showEffect="fade" modal="true" closeOnEscape="true">
+                                        <p:autoComplete
+                                                id="acSimple"
+                                                value="#{ventaFrm.clienteSeleccionado}"
+                                                completeMethod="#{clienteFrm.completeText}"
+                                                var="cliente"
+                                                itemLabel="#{cliente.nombre}"
+                                                itemValue="#{cliente}"
+                                                converter="clienteConverter"
+                                                forceSelection="true"
+                                                scrollHeight="250"
+                                        />
+
+                                        <p:commandButton
+                                                id="btnSeleccionarCliente"
+                                                value="Seleccionar"
+                                                process="@this acSimple"
+                                                update="txtCliente"
+                                                actionListener="#{ventaFrm.btnSeleccionarCliente}"
+                                                oncomplete="PF('dlg1').hide()"
+                                        />
+
+                                    </p:dialog>
+
+                                    <p:outputLabel for="menuEstado" value="Estado:" />
+                                    <p:selectOneMenu id="menuEstado" value="#{ventaFrm.registro.estado}">
+                                        <f:selectItem itemLabel="ORDEN" itemValue="ORDEN" />
+                                        <f:selectItem itemLabel="CREADA" itemValue="CREADA" />
+                                        <f:selectItem itemLabel="APROBADA" itemValue="APROBADA" />
+                                        <f:selectItem itemLabel="RECHAZADA" itemValue="RECHAZADA" />
+                                        <f:selectItem itemLabel="ANULADA" itemValue="ANULADA" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel for="dpFecha" value="Fecha"/>
+                                    <p:datePicker id="dpFecha"
+                                                  value="#{ventaFrm.registro.fecha}"
+                                                  showTime="true"
+                                                  hourFormat="24"
+                                                  timeInput="true"
+                                                  timeZone="America/El_Salvador"
+                                                  pattern="yyyy-MM-dd'T'HH:mm"
+                                                  converter="offsetDateTimeConverter"
+                                                  requiredMessage="La fecha es obligatoria"
+                                                  touchUI="false" />
+
+                                    <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
+                                    <p:inputTextarea id="txtObservaciones" value="#{ventaFrm.registro.observaciones}" size="80"/>
+
+                                    <p:commandButton
+                                            id="btnGuardar"
+                                            value="Guardar"
+                                            actionListener="#{ventaFrm.btnGuardarHandler}"
+                                            rendered="#{ventaFrm.estado=='CREAR'}"
+                                            styleClass="ui-button-success"
+                                            update=":pnlDetalle :pnlTabla"
+                                    />
+
+                                    <p:commandButton
+                                            id="btnModificar"
+                                            value="Modificar"
+                                            actionListener="#{ventaFrm.btnModificarHandler}"
+                                            rendered="#{ventaFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-secondary"
+                                            update=":pnlDetalle :pnlTabla"
+                                    />
+
+                                    <p:commandButton
+                                            id="btnEliminar"
+                                            value="Eliminar"
+                                            actionListener="#{ventaFrm.btnEliminarHandler}"
+                                            rendered="#{ventaFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-danger"
+                                            update=":pnlDetalle :pnlTabla"
+                                    />
+                                </h:panelGrid>
+                            </h:form>
+                        </p:tab>
+
+                        <p:tab id="pnlDetalleVenta" closable="false" title="Detalles de Venta" disabled="#{ventaFrm.estado!='MODIFICAR'}">
+                            <ui:include src="VentaDetalle.xhtml" />
+                        </p:tab>
+                    </p:tabView>
+                </h:panelGroup>
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</f:view>
+</html>

@@ -27,15 +27,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto> implement
         return em;
     }
 
-    public List<Producto> getListaProductos() {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Producto> cq = cb.createQuery(Producto.class);
-        Root<Producto> producto = cq.from(Producto.class);
-        cq.select(producto);
-
-        return em.createQuery(cq).getResultList();
-    }
-
     public Optional<Producto> findById(Long id) {
         return Optional.ofNullable(em.find(Producto.class, id));
     }
