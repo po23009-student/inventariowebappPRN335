@@ -59,7 +59,7 @@
                     <p:outputLabel for="soProducto" value="Producto:"/>
                     <p:selectOneMenu id="soProducto"
                                      value="#{ventaDetalleFrm.productoSeleccionado}"
-                                     converter="productoConverter"
+                                     converter="productoVentaConverter"
                                      required="true"
                                      requiredMessage="Debe seleccionar un producto"
                     >
@@ -68,6 +68,7 @@
                                        itemLabel="#{p.nombreProducto}"
                                        itemValue="#{p}"
                         />
+
                     </p:selectOneMenu>
 
                     <p:outputLabel for="txtCantidad" value="Cantidad:"/>

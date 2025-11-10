@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @LocalBean
 @Stateless

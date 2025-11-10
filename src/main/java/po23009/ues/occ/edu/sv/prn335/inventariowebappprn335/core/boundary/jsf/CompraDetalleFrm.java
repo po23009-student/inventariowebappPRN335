@@ -1,7 +1,6 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.Dependent;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
@@ -15,10 +14,8 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDe
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
-
 
 @Named
 @ViewScoped
@@ -45,7 +42,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     @PostConstruct
     public void init() {
         listaProductos = productoDAO.findRange(0, Integer.MAX_VALUE);
-        this.nombreBean = "Detalles de Compra";
+        this.nombreBean = "Compra Detalle";
     }
 
     @Override
@@ -106,7 +103,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
         if (productoSeleccionado == null || productoSeleccionado.getId() == null) {
             facesContext.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar un producto válido"));
-            return;
+            return; // Evita persistir un producto inválido
         }
 
         registro.setIdProducto(productoSeleccionado);

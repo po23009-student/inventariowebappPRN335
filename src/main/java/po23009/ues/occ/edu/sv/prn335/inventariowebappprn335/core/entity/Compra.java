@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 @Table(name = "compra")
 public class Compra {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_compra")
     private Long id;
 

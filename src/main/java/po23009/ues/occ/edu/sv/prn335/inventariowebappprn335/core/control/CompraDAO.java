@@ -23,12 +23,4 @@ public class CompraDAO extends InventarioDefaultDataAccess<Compra> implements Se
     }
 
 
-    public Long obtenerSiguienteId() {
-        Long ultimoId = getEntityManager().createQuery(
-                        "SELECT COALESCE(MAX(c.id), 0) FROM Compra c", Long.class)
-                .getSingleResult();
-
-        return ultimoId + 1;
-    }
-
 }

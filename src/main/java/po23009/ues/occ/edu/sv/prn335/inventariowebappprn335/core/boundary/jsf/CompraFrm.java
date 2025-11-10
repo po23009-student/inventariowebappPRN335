@@ -51,7 +51,6 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     public void selectionHandler(SelectEvent<Compra> r) {
         if (r != null) {
             this.registro = r.getObject();
-            proveedorSeleccionado = this.registro.getProveedor();
             this.estado = ESTADO_CRUD.MODIFICAR;
             cargarDetallesCompra();
         }
@@ -70,7 +69,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     @Override
     protected Compra nuevoRegistro() {
         Compra nuevaCompra = new Compra();
-        nuevaCompra.setId(compraDAO.obtenerSiguienteId());
+        nuevaCompra.setProveedor(proveedorSeleccionado);
         return nuevaCompra;
     }
 
@@ -109,6 +108,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     public void btnSeleccionarProv(ActionEvent actionEvent) {
         if (proveedorSeleccionado != null) {
             this.registro.setProveedor(proveedorSeleccionado);
+            System.out.println("Proveedor seleccionado: " + proveedorSeleccionado.getNombre());
         } else {
             System.out.println("No se seleccionó ningún proveedor");
         }

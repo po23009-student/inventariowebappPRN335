@@ -94,15 +94,15 @@
 
                                     <p:dialog header="Seleccionar Proveedor" widgetVar="dlg1" minHeight="10" width="350" showEffect="fade" modal="true" closeOnEscape="true">
                                         <p:autoComplete
-                                            id="acSimple"
-                                            value="#{compraFrm.proveedorSeleccionado}"
-                                            completeMethod="#{proveedorFrm.completeText}"
-                                            var="prov"
-                                            itemLabel="#{prov.nombre}"
-                                            itemValue="#{prov}"
-                                            converter="proveedorConverter"
-                                            forceSelection="true"
-                                            scrollHeight="250"
+                                                id="acSimple"
+                                                value="#{compraFrm.proveedorSeleccionado}"
+                                                completeMethod="#{proveedorFrm.completeText}"
+                                                var="prov"
+                                                itemLabel="#{prov.nombre}"
+                                                itemValue="#{prov}"
+                                                converter="proveedorConverter"
+                                                forceSelection="true"
+                                                scrollHeight="250"
                                         />
 
                                         <p:commandButton
@@ -156,7 +156,7 @@
                                             rendered="#{compraFrm.estado=='MODIFICAR'}"
                                             styleClass="ui-button-secondary"
                                             update=":pnlDetalle :pnlTabla"
-                                        />
+                                    />
 
                                     <p:commandButton
                                             id="btnEliminar"
@@ -165,7 +165,7 @@
                                             rendered="#{compraFrm.estado=='MODIFICAR'}"
                                             styleClass="ui-button-danger"
                                             update=":pnlDetalle :pnlTabla"
-                                        />
+                                    />
                                 </h:panelGrid>
                             </h:form>
                         </p:tab>
