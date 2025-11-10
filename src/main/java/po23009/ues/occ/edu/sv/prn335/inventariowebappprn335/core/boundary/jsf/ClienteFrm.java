@@ -10,7 +10,9 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.Inventa
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Cliente;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
@@ -66,5 +68,13 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
             }
         }
         return null;
+    }
+
+    public List<Cliente> completeText(String query) {
+        String queryLowerCase = query.toLowerCase();
+        List<Cliente> clientes = clienteDAO.findRange(0, Integer.MAX_VALUE);
+        return clientes.stream()
+                .filter(p -> p.getActivo() && p.getNombre().toLowerCase().contains(queryLowerCase))
+                .collect(Collectors.toList());
     }
 }

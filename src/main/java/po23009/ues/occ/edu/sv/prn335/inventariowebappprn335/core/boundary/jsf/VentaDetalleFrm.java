@@ -7,11 +7,9 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDetalleDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ProductoDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.VentaDetalleDAO;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.VentaDetalle;
 
@@ -108,8 +106,8 @@ public class VentaDetalleFrm extends DefaultFrm<VentaDetalle> implements Seriali
             return;
         }
 
-        registro.setIdProducto(productoSeleccionado);
-        getDAO().crear(registro);
+        this.registro.setIdProducto(productoSeleccionado);
+        getDAO().crear(this.registro);
 
         facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro creado", "Detalle creado correctamente"));
         facesContext.getExternalContext().getFlash().setKeepMessages(true);

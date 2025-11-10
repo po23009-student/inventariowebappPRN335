@@ -51,6 +51,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     public void selectionHandler(SelectEvent<Compra> r) {
         if (r != null) {
             this.registro = r.getObject();
+            proveedorSeleccionado = this.registro.getProveedor();
             this.estado = ESTADO_CRUD.MODIFICAR;
             cargarDetallesCompra();
         }

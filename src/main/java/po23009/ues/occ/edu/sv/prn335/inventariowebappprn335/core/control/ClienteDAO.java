@@ -5,9 +5,9 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Cliente;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @LocalBean
 @Stateless
@@ -23,7 +23,7 @@ public class ClienteDAO extends InventarioDefaultDataAccess<Cliente> implements 
         return em;
     }
 
-    public Proveedor find(Integer id)  {
-        return em.find(Proveedor.class, id);
+    public Cliente find(UUID id)  {
+        return em.find(Cliente.class, id);
     }
 }

@@ -1,12 +1,120 @@
-<!DOCTYPE html>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:f="jakarta.faces.core"
-      xmlns:h="jakarta.faces.html">
-<f:view>
-    <h:head></h:head>
-    <h:body>
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="jakarta.faces.html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
 
-    </h:body>
-</f:view>
-</html>
+    <h:form id="frmVentaDetalleCompleto">
+
+        <h:panelGroup id="pnlVentaDetalles" layout="block">
+
+            <h:panelGroup id="pnlTablaDetallesVenta" rendered="#{ventaDetalleFrm.estado=='NADA'}">
+                <p:dataTable
+                        id="tablaDetallesVenta"
+                        var="vd"
+                        value="#{ventaFrm.detallesPorVenta}"
+                        selectionMode="single" selection="#{ventaDetalleFrm.registro}"
+                        rowKey="#{vd.id}"
+                        paginator="true"
+                        paginatorPosition="bottom"
+                        rows="#{ventaDetalleFrm.pageSize}"
+                        emptyMessage="No hay detalles registrados para esta venta">
+
+                    <p:ajax event="rowSelect" listener="#{ventaDetalleFrm.selectionHandler}" update="pnlVentaDetalles" />
+
+                    <p:column headerText="ID">#{vd.id}</p:column>
+                    <p:column headerText="Producto">#{vd.idProducto.nombreProducto}</p:column>
+                    <p:column headerText="Cantidad">#{vd.cantidad}</p:column>
+                    <p:column headerText="Precio">#{vd.precio}</p:column>
+                    <p:column headerText="Estado">#{vd.estado}</p:column>
+                    <p:column headerText="Observaciones">#{vd.observaciones}</p:column>
+                </p:dataTable>
+
+                <p:commandButton
+                        id="btnNuevo"
+                        value="Nuevo Detalle de Venta"
+                        styleClass="ui-button"
+                        actionListener="#{ventaDetalleFrm.btnNuevoHandler}"
+                        process="@this"
+                        update="pnlVentaDetalles"/>
+
+                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" closable="true"/>
+            </h:panelGroup>
+
+            <h:panelGroup id="pnlDetalleVentasDetalle" rendered="#{ventaDetalleFrm.estado!='NADA'}">
+                <p:commandButton
+                        id="btnCancelar"
+                        value="Cancelar Venta Detalle"
+                        actionListener="#{ventaDetalleFrm.btnCancelarHandler}"
+                        styleClass="ui-button-warning"
+                        process="@this"
+                        update="pnlVentaDetalles"
+                />
+
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel for="txtId" value="ID:"/>
+                    <p:inputText id="txtId" value="#{ventaDetalleFrm.registro.id}" readonly="true" disabled="true"/>
+
+                    <p:outputLabel for="soProducto" value="Producto:"/>
+                    <p:selectOneMenu id="soProducto"
+                                     value="#{ventaDetalleFrm.productoSeleccionado}"
+                                     converter="productoConverter"
+                                     required="true"
+                                     requiredMessage="Debe seleccionar un producto"
+                    >
+                        <f:selectItems value="#{ventaDetalleFrm.listaProductos}"
+                                       var="p"
+                                       itemLabel="#{p.nombreProducto}"
+                                       itemValue="#{p}"
+                        />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="txtCantidad" value="Cantidad:"/>
+                    <p:inputText id="txtCantidad" value="#{ventaDetalleFrm.registro.cantidad}" size="75"/>
+
+                    <p:outputLabel for="txtPrecio" value="Precio:"/>
+                    <p:inputText id="txtPrecio" value="#{ventaDetalleFrm.registro.precio}" size="75"/>
+
+                    <p:outputLabel for="menuEstado" value="Estado:" />
+                    <p:selectOneMenu id="menuEstado" value="#{ventaDetalleFrm.registro.estado}">
+                        <f:selectItem itemLabel="ORDEN" itemValue="ORDEN" />
+                        <f:selectItem itemLabel="CREADA" itemValue="CREADA" />
+                        <f:selectItem itemLabel="APROBADA" itemValue="APROBADA" />
+                        <f:selectItem itemLabel="RECHAZADA" itemValue="RECHAZADA" />
+                        <f:selectItem itemLabel="ANULADA" itemValue="ANULADA" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
+                    <p:inputTextarea id="txtObservaciones" value="#{ventaDetalleFrm.registro.observaciones}" cols="60" rows="3"/>
+                </h:panelGrid>
+
+                <p:commandButton
+                        id="btnGuardar"
+                        value="Guardar Venta Detalle"
+                        actionListener="#{ventaDetalleFrm.btnGuardarHandler}"
+                        rendered="#{ventaDetalleFrm.estado=='CREAR'}"
+                        process="@form"
+                        styleClass="ui-button-success"
+                        update="pnlVentaDetalles"/>
+
+                <p:commandButton
+                        id="btnModificar"
+                        value="Modificar Venta Detalle"
+                        actionListener="#{ventaDetalleFrm.btnModificarHandler}"
+                        rendered="#{ventaDetalleFrm.estado=='MODIFICAR'}"
+                        process="@form"
+                        styleClass="ui-button-secondary"
+                        update="pnlVentaDetalles"/>
+
+                <p:commandButton
+                        id="btnEliminar"
+                        value="Eliminar Venta Detalle"
+                        actionListener="#{ventaDetalleFrm.btnEliminarHandler}"
+                        rendered="#{ventaDetalleFrm.estado=='MODIFICAR'}"
+                        styleClass="ui-button-danger"
+                        update="pnlVentaDetalles"/>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</ui:composition>

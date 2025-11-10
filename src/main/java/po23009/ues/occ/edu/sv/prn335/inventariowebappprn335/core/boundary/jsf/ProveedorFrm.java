@@ -22,8 +22,6 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     @Inject
     ProveedorDAO proveedorDAO;
 
-    private Proveedor proveedorSeleccionado;
-
     public ProveedorFrm() {
         this.nombreBean = "Proveedores";
     }
@@ -76,13 +74,5 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
         return proveedores.stream()
                 .filter(p -> p.getActivo() && p.getNombre().toLowerCase().contains(queryLowerCase))
                 .collect(Collectors.toList());
-    }
-
-    public Proveedor getProveedorSeleccionado() {
-        return proveedorSeleccionado;
-    }
-
-    public void setProveedorSeleccionado(Proveedor proveedorSeleccionado) {
-        this.proveedorSeleccionado = proveedorSeleccionado;
     }
 }

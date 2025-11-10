@@ -46,6 +46,7 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     public void selectionHandler(SelectEvent<Venta> r) {
         if (r != null) {
             this.registro = r.getObject();
+            clienteSeleccionado = this.registro.getIdCliente();
             this.estado = ESTADO_CRUD.MODIFICAR;
             cargarDetallesVenta();
         }
@@ -104,7 +105,7 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         if (clienteSeleccionado != null) {
             this.registro.setIdCliente(clienteSeleccionado);
         } else {
-            System.out.println("No se seleccionó ningún proveedor");
+            System.out.println("No se seleccionó ningún cliente");
         }
     }
 

@@ -7,7 +7,8 @@ import jakarta.faces.convert.Converter;
 import jakarta.faces.convert.FacesConverter;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ClienteDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Cliente;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
+
+import java.util.UUID;
 
 @FacesConverter("clienteConverter")
 public class ClienteConverter implements Converter {
@@ -23,7 +24,7 @@ public class ClienteConverter implements Converter {
         }
 
         try {
-            Integer id = Integer.valueOf(value);
+            UUID id = UUID.fromString(value);
             return clienteDAO.find(id);
         } catch (NumberFormatException e) {
             return null;
