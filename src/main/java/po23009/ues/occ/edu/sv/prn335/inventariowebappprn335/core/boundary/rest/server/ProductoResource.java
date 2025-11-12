@@ -6,15 +6,15 @@ import jakarta.validation.constraints.Min;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ProveedorDAO;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.ProductoDAO;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
 
-import java.math.BigInteger;
+import java.util.UUID;
 
-@Path("proveedor")
-public class ProveedorResource {
+@Path("/producto")
+public class ProductoResource {
     @Inject
-    ProveedorDAO proveedorDAO;
+    ProductoDAO productoDAO;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -31,24 +31,26 @@ public class ProveedorResource {
     ) {
         if(first >= 0 && max <= 100) {
             try {
-                int total = proveedorDAO.count();
-                Response.ok(proveedorDAO.findRange(first, max)).header("Total-records", total).build();
+                int total = productoDAO.count();
+                return Response.ok(productoDAO.findRange(first, max)).header("Total-records", total).build();
             } catch(Exception ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
-
         }
 
         return Response.status(422).header("Missing-parameter", "first, max").build();
     }
 
     @GET
-    @Path("{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("id") Integer id) {
+    public Response findById(
+            @PathParam("id")
+            UUID id
+    ) {
         if(id!=null) {
             try {
-                Proveedor resp = proveedorDAO.find(id);
+                Producto resp = productoDAO.find(id);
 
                 if(resp!=null) {
                     return Response.ok(resp).build();
@@ -66,14 +68,17 @@ public class ProveedorResource {
     }
 
     @DELETE
-    @Path("{id}")
-    public Response delete(@PathParam("id") Integer id) {
+    @Path("/{id}")
+    public Response delete(
+            @PathParam("id")
+            UUID id
+    ) {
         if(id!=null) {
             try {
-                Proveedor resp = proveedorDAO.find(id);
+                Producto resp = productoDAO.find(id);
 
                 if(resp!=null) {
-                    proveedorDAO.eliminar(resp);
+                    productoDAO.eliminar(resp);
                     return Response.noContent().build();
                 }
 

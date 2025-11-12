@@ -4,16 +4,16 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.ProductoTipoProducto;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-@LocalBean
 @Stateless
-public class ProductoDAO extends InventarioDefaultDataAccess<Producto> implements Serializable {
+@LocalBean
+public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<ProductoTipoProducto> implements Serializable {
 
-    public ProductoDAO() { super(Producto.class); }
+    public ProductoTipoProductoDAO() { super(ProductoTipoProducto.class); }
 
     @PersistenceContext(unitName="inventarioPU")
     EntityManager em;
@@ -23,6 +23,8 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto> implement
         return em;
     }
 
-    public Producto find(UUID id)  { return em.find(Producto.class, id); }
+    public ProductoTipoProducto find(UUID id)  {
+        return em.find(ProductoTipoProducto.class, id);
+    }
 
 }
