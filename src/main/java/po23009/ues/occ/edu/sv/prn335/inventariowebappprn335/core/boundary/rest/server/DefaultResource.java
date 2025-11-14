@@ -7,8 +7,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
 
-import java.util.UUID;
-
 public abstract class DefaultResource<T, ID> {
     protected abstract InventarioDefaultDataAccess<T, ID> getDAO();
 
@@ -66,7 +64,7 @@ public abstract class DefaultResource<T, ID> {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createProducto(T entity) {
+    public Response crear(T entity) {
         if(entity!=null) {
             getDAO().crear(entity);
             return Response.ok(entity).status(Response.Status.CREATED).build();
@@ -80,7 +78,7 @@ public abstract class DefaultResource<T, ID> {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response updateProducto(
+    public Response actualizar(
             @PathParam("id")
             ID id,
             T entity
@@ -97,7 +95,7 @@ public abstract class DefaultResource<T, ID> {
 
     @DELETE
     @Path("/{id}")
-    public Response delete(
+    public Response eliminar(
             @PathParam("id")
             ID id
     ) {

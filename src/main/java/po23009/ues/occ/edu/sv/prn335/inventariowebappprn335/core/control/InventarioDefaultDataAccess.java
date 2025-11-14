@@ -1,13 +1,10 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Cliente;
 
 import java.util.List;
-import java.util.UUID;
 
 public abstract class InventarioDefaultDataAccess<T, ID> implements InventarioDAOInterface<T, ID> {
     final Class<T> entityClass;
