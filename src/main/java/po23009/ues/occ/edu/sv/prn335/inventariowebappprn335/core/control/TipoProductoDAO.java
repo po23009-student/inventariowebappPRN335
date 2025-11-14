@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Stateless
 @LocalBean
-public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto> implements Serializable {
+public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, Long> implements Serializable {
 
     public TipoProductoDAO() { super(TipoProducto.class); }
 
@@ -21,10 +21,6 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto> i
     @Override
     public EntityManager getEntityManager() {
         return em;
-    }
-
-    public TipoProducto find(Long id)  {
-        return em.find(TipoProducto.class, id);
     }
 
 }

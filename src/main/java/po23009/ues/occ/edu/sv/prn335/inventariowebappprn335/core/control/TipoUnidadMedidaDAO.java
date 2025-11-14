@@ -17,7 +17,7 @@ import java.util.List;
 
 @LocalBean
 @Stateless
-public class TipoUnidadMedidaDAO extends InventarioDefaultDataAccess<TipoUnidadMedida> implements Serializable {
+public class TipoUnidadMedidaDAO extends InventarioDefaultDataAccess<TipoUnidadMedida, Integer> implements Serializable {
 
     public TipoUnidadMedidaDAO() { super(TipoUnidadMedida.class); }
 
@@ -27,15 +27,6 @@ public class TipoUnidadMedidaDAO extends InventarioDefaultDataAccess<TipoUnidadM
     @Override
     public EntityManager getEntityManager() {
         return em;
-    }
-
-    public List<TipoUnidadMedida> getListaTiposUnidadMedida() {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<TipoUnidadMedida> cq = cb.createQuery(TipoUnidadMedida.class);
-        Root<TipoUnidadMedida> tipoUnidadMedida = cq.from(TipoUnidadMedida.class);
-        cq.select(tipoUnidadMedida);
-
-        return em.createQuery(cq).getResultList();
     }
 
     public TipoUnidadMedida getTipoUnidadMedidaPorCaracteristica(Caracteristica caracteristica) {

@@ -18,7 +18,7 @@ import java.util.List;
 
 @Named
 @ViewScoped
-public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
+public class AlmacenFrm extends DefaultFrm<Almacen, Integer> implements Serializable {
     @Inject
     FacesContext facesContext;
 
@@ -46,7 +46,7 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
     }
 
     @Override
-    protected InventarioDefaultDataAccess<Almacen> getDAO() {
+    protected InventarioDefaultDataAccess<Almacen, Integer> getDAO() {
         return almacenDAO;
     }
 

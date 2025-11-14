@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Named
 @ViewScoped
-public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Serializable {
+public class CompraDetalleFrm extends DefaultFrm<CompraDetalle, UUID> implements Serializable {
     @Inject
     FacesContext facesContext;
 
@@ -51,7 +51,7 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Seria
     }
 
     @Override
-    protected InventarioDefaultDataAccess<CompraDetalle> getDAO() {
+    protected InventarioDefaultDataAccess<CompraDetalle, UUID> getDAO() {
         return compraDetalleDAO;
     }
 

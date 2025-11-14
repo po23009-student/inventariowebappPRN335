@@ -18,7 +18,7 @@ import java.util.List;
 
 @Named
 @ViewScoped
-public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
+public class CompraFrm extends DefaultFrm<Compra, Long> implements Serializable {
     @Inject
     FacesContext facesContext;
 
@@ -62,7 +62,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     }
 
     @Override
-    protected InventarioDefaultDataAccess<Compra> getDAO() {
+    protected InventarioDefaultDataAccess<Compra, Long> getDAO() {
         return compraDAO;
     }
 

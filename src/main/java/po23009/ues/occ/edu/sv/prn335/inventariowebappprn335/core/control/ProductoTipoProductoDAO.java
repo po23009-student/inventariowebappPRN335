@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Stateless
 @LocalBean
-public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<ProductoTipoProducto> implements Serializable {
+public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<ProductoTipoProducto, UUID> implements Serializable {
 
     public ProductoTipoProductoDAO() { super(ProductoTipoProducto.class); }
 
@@ -21,10 +21,6 @@ public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<Product
     @Override
     public EntityManager getEntityManager() {
         return em;
-    }
-
-    public ProductoTipoProducto find(UUID id)  {
-        return em.find(ProductoTipoProducto.class, id);
     }
 
 }

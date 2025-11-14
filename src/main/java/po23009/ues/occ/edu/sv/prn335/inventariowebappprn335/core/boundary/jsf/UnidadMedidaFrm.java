@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Named
 @ViewScoped
-public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Serializable {
+public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida, Integer> implements Serializable {
     @Inject
     FacesContext facesContext;
 
@@ -36,7 +36,7 @@ public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Seriali
     }
 
     @Override
-    protected InventarioDefaultDataAccess<UnidadMedida> getDAO() {
+    protected InventarioDefaultDataAccess<UnidadMedida, Integer> getDAO() {
         return unidadMedidaDAO;
     }
 

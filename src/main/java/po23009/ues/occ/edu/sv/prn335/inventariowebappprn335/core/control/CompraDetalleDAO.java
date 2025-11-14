@@ -14,10 +14,11 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDe
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Stateless
 @LocalBean
-public class CompraDetalleDAO extends InventarioDefaultDataAccess<CompraDetalle> implements Serializable {
+public class CompraDetalleDAO extends InventarioDefaultDataAccess<CompraDetalle, UUID> implements Serializable {
 
     public CompraDetalleDAO() { super(CompraDetalle.class); }
 

@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Stateless
 @LocalBean
-public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle> implements Serializable {
+public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, UUID> implements Serializable {
 
     public VentaDetalleDAO() { super(VentaDetalle.class); }
 

@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Stateless
 @LocalBean
-public class AlmacenDAO extends InventarioDefaultDataAccess<Almacen> implements Serializable {
+public class AlmacenDAO extends InventarioDefaultDataAccess<Almacen, Integer> implements Serializable {
 
     public AlmacenDAO() { super(Almacen.class); }
 
@@ -20,10 +20,6 @@ public class AlmacenDAO extends InventarioDefaultDataAccess<Almacen> implements 
     @Override
     public EntityManager getEntityManager() {
         return em;
-    }
-
-    public Almacen find(Integer id)  {
-        return em.find(Almacen.class, id);
     }
 
 }

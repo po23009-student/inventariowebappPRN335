@@ -16,7 +16,7 @@ import java.util.List;
 
 @Stateless
 @LocalBean
-public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor> implements Serializable {
+public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor, Integer> implements Serializable {
 
     public ProveedorDAO() { super(Proveedor.class); }
 
@@ -26,10 +26,6 @@ public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor> impleme
     @Override
     public EntityManager getEntityManager() {
         return em;
-    }
-
-    public Proveedor find(Integer id)  {
-        return em.find(Proveedor.class, id);
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @LocalBean
 @Stateless
-public class ClienteDAO extends InventarioDefaultDataAccess<Cliente> implements Serializable {
+public class ClienteDAO extends InventarioDefaultDataAccess<Cliente, UUID> implements Serializable {
 
     public ClienteDAO() { super(Cliente.class); }
 
@@ -23,7 +23,4 @@ public class ClienteDAO extends InventarioDefaultDataAccess<Cliente> implements 
         return em;
     }
 
-    public Cliente find(UUID id)  {
-        return em.find(Cliente.class, id);
-    }
 }

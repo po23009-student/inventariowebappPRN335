@@ -18,14 +18,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public abstract class DefaultFrm<T> {
+public abstract class DefaultFrm<T, ID> {
     protected T registro;
     protected LazyDataModel<T> modelo;
     protected String nombreBean;
     protected ESTADO_CRUD estado;
 
     protected abstract FacesContext getFacesContext();
-    protected abstract InventarioDefaultDataAccess<T> getDAO();
+    protected abstract InventarioDefaultDataAccess<T, ID> getDAO();
     protected abstract String getIdAsText(T r);
     protected abstract T getIdByText(String id);
     protected abstract T nuevoRegistro();

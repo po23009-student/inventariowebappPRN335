@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Stateless
 @LocalBean
-public class CompraDAO extends InventarioDefaultDataAccess<Compra> implements Serializable {
+public class CompraDAO extends InventarioDefaultDataAccess<Compra, Long> implements Serializable {
 
     public CompraDAO() { super(Compra.class); }
 

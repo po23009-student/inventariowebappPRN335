@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @LocalBean
 @Stateless
-public class CaracteristicaDAO extends InventarioDefaultDataAccess<Caracteristica> implements Serializable {
+public class CaracteristicaDAO extends InventarioDefaultDataAccess<Caracteristica, Integer> implements Serializable {
 
     public CaracteristicaDAO() { super(Caracteristica.class); }
 

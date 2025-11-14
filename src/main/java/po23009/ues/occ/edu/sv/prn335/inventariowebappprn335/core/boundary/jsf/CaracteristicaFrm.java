@@ -17,7 +17,7 @@ import java.util.List;
 
 @Named
 @ViewScoped
-public class CaracteristicaFrm extends DefaultFrm<Caracteristica> implements Serializable {
+public class CaracteristicaFrm extends DefaultFrm<Caracteristica, Integer> implements Serializable {
 
     @Inject
     private FacesContext facesContext;
@@ -38,7 +38,7 @@ public class CaracteristicaFrm extends DefaultFrm<Caracteristica> implements Ser
 
     @PostConstruct
     public void init() {
-        this.listaTiposUnidadMedida = tumDAO.getListaTiposUnidadMedida();
+        this.listaTiposUnidadMedida = tumDAO.findRange(0, Integer.MAX_VALUE);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CaracteristicaFrm extends DefaultFrm<Caracteristica> implements Ser
     }
 
     @Override
-    protected InventarioDefaultDataAccess<Caracteristica> getDAO() {
+    protected InventarioDefaultDataAccess<Caracteristica, Integer> getDAO() {
         return caracteristicaDAO;
     }
 

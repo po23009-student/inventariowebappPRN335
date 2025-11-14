@@ -18,7 +18,7 @@ import java.util.List;
 
 @Named
 @ViewScoped
-public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida> implements Serializable {
+public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida, Integer> implements Serializable {
     @Inject
     FacesContext facesContext;
 
@@ -51,7 +51,7 @@ public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida> implements
     }
 
     @Override
-    protected InventarioDefaultDataAccess<TipoUnidadMedida> getDAO() {
+    protected InventarioDefaultDataAccess<TipoUnidadMedida, Integer> getDAO() {
         return tipoUnidadMedidaDAO;
     }
 

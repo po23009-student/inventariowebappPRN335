@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 @Named
 @ViewScoped
-public class TipoAlmacenFrm extends DefaultFrm<TipoAlmacen> implements Serializable {
+public class TipoAlmacenFrm extends DefaultFrm<TipoAlmacen, Integer> implements Serializable {
     @Inject
     FacesContext facesContext;
 
@@ -30,7 +30,7 @@ public class TipoAlmacenFrm extends DefaultFrm<TipoAlmacen> implements Serializa
     }
 
     @Override
-    protected InventarioDefaultDataAccess<TipoAlmacen> getDAO() {
+    protected InventarioDefaultDataAccess<TipoAlmacen, Integer> getDAO() {
         return tipoAlmacenDAO;
     }
 

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
-public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
+public class ClienteFrm extends DefaultFrm<Cliente, UUID> implements Serializable {
     @Inject
     FacesContext facesContext;
 
@@ -33,7 +33,7 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
     }
 
     @Override
-    protected InventarioDefaultDataAccess<Cliente> getDAO() {
+    protected InventarioDefaultDataAccess<Cliente, UUID> getDAO() {
         return clienteDAO;
     }
 

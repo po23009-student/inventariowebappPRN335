@@ -4,10 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Cliente;
 
 import java.util.List;
+import java.util.UUID;
 
-public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInterface<T> {
+public abstract class InventarioDefaultDataAccess<T, ID> implements InventarioDAOInterface<T, ID> {
     final Class<T> entityClass;
 
     public InventarioDefaultDataAccess(Class<T> entityClass) {
@@ -76,35 +78,6 @@ public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInt
         }
     }
 
-    public T leer(Number id) {
-        if(id.intValue() < 1) {
-            throw new IllegalArgumentException("Los parametros ingresados son invalidos");
-        }
-
-        try {
-            EntityManager em = getEntityManager();
-
-            if(em == null) {
-                throw new IllegalStateException("EntityManager no disponible");
-            }
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<T> cq = cb.createQuery(entityClass);
-            Root<T> root = cq.from(entityClass);
-            cq.select(root);
-
-            TypedQuery<T> tq = em.createQuery(cq);
-
-            Predicate predicadoId = cb.equal(root.get("id"), id.intValue());
-
-            cq.where(predicadoId);
-
-            return tq.getSingleResult();
-
-        } catch(Exception ex) {
-            throw new IllegalStateException("Ocurrió un error", ex);
-        }
-    }
-
     public void eliminar(T registro) {
         if(registro == null) {
             throw new IllegalArgumentException("Los parametros ingresados son invalidos");
@@ -123,6 +96,10 @@ public abstract class InventarioDefaultDataAccess<T> implements InventarioDAOInt
         } catch(Exception ex) {
             throw new IllegalStateException("Ocurrió un error", ex);
         }
+    }
+
+    public T find(ID id)  {
+        return getEntityManager().find(entityClass, id);
     }
 
     public List<T> findRange(int first, int max) throws IllegalArgumentException, IllegalStateException {

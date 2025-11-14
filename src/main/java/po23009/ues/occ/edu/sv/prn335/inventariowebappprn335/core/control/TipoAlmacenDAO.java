@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 @Stateless
 @LocalBean
-public class TipoAlmacenDAO extends InventarioDefaultDataAccess<TipoAlmacen> implements Serializable {
+public class TipoAlmacenDAO extends InventarioDefaultDataAccess<TipoAlmacen, Integer> implements Serializable {
 
     public TipoAlmacenDAO() { super(TipoAlmacen.class); }
 

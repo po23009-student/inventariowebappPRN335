@@ -12,7 +12,7 @@ import java.util.List;
 
 @LocalBean
 @Stateless
-public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida> implements Serializable {
+public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida, Integer> implements Serializable {
 
     public UnidadMedidaDAO() { super(UnidadMedida.class); }
 
