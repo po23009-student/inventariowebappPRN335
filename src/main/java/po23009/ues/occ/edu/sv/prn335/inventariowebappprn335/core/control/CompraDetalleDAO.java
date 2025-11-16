@@ -4,11 +4,7 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
 
 import java.io.Serializable;
@@ -31,10 +27,13 @@ public class CompraDetalleDAO extends InventarioDefaultDataAccess<CompraDetalle,
     }
 
     public List<CompraDetalle> findByCompra(Long idCompra) {
-        TypedQuery<CompraDetalle> q = em.createQuery(
-                "SELECT cd FROM CompraDetalle cd WHERE cd.idCompra.id = :idCompra", CompraDetalle.class);
-        q.setParameter("idCompra", idCompra);
-        return q.getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<CompraDetalle> cq = cb.createQuery(CompraDetalle.class);
+        Root<CompraDetalle> root = cq.from(CompraDetalle.class);
+        Predicate predicate = cb.equal(root.get("idCompra").get("id"), idCompra);
+        cq.select(root).where(predicate);
+
+        return em.createQuery(cq).getResultList();
     }
 
     public BigDecimal calcularMontoByCompra(Long idcompra) {
