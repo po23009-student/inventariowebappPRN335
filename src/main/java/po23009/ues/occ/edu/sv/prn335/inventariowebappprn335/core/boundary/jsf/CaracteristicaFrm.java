@@ -10,10 +10,12 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.Caracte
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.TipoUnidadMedidaDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Caracteristica;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.TipoUnidadMedida;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Named
 @ViewScoped

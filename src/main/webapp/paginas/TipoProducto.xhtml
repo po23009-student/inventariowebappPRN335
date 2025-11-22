@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+>
+<f:view>
+    <h:head></h:head>
+    <h:body>
+        <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+            <ui:define name="titulo">#{tipoProductoFrm.nombreBean}</ui:define>
+
+            <ui:define name="contenido">
+                <h1 class="tituloPagina">#{tipoProductoFrm.nombreBean}</h1>
+
+                <h:panelGroup id="pnlTabla" >
+                    <h:panelGrid>
+                        <h:form id="frmTop" rendered="#{tipoProductoFrm.estado=='NADA'}">
+                            <p:dataTable id="tabla-top"
+                                         lazy="true"
+                                         rows="#{tipoProductoFrm.pageSize}"
+                                         paginator="true"
+                                         paginatorPosition="bottom"
+                                         value="#{tipoProductoFrm.modelo}"
+                                         var="r"
+                                         selectionMode="single"
+                                         selection="#{tipoProductoFrm.registro}" rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{tipoProductoFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                <p:column>
+                                    #{r.id}
+                                    <f:facet name="header">ID</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.nombre}
+                                    <f:facet name="header">Nombre</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.activo?'Activo':'Inactivo'}
+                                    <f:facet name="header">Estado</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.comentarios.toUpperCase()}
+                                    <f:facet name="header">Observaciones</f:facet>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton
+                                    id="btnNuevo"
+                                    value="Nuevo Tipo de Producto"
+                                    actionListener="#{tipoProductoFrm.btnNuevoHandler}"
+                                    update=":pnlDetalle :pnlTabla"
+                            />
+
+                            <p:messages id="msgs" showDetail="true" redisplay="false" showSummary="false" closable="true" />
+                        </h:form>
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup id="pnlDetalle">
+                    <h:form>
+                        <p:commandButton
+                                id="btnCancelar"
+                                value="Cancelar"
+                                actionListener="#{tipoProductoFrm.btnCancelarHandler}"
+                                styleClass="ui-button-warning"
+                                rendered="#{tipoProductoFrm.estado!='NADA'}"
+                                update=":pnlDetalle :pnlTabla"
+                        />
+                    </h:form>
+
+                    <p:tabView id="tabTipoProducto" cache="false" dynamic="true" rendered="#{tipoProductoFrm.estado!='NADA'}">
+                        <p:tab closable="false" title="Generalidades">
+                            <h:form id="frmCrear" rendered="#{tipoProductoFrm.estado!='NADA'}">
+                                <h:panelGrid>
+                                    <p:outputLabel for="txtId" value="ID:" />
+                                    <p:inputText id="txtId" value="#{tipoProductoFrm.registro.id}" readonly="true" disabled="true"/>
+
+                                    <p:outputLabel for="txtNombre" value="Nombre:" />
+                                    <p:inputText id="txtNombre" value="#{tipoProductoFrm.registro.nombre}" size="75" />
+
+                                    <p:outputLabel for="soTipoProductoPadre" value="Depende de:"/>
+
+                                    <p:selectOneMenu id="soTipoProductoPadre"
+                                                     value="#{tipoProductoFrm.tipoProductoPadreSeleccionado}"
+                                                     converter="tipoProductoConverter"
+                                                     required="false">
+
+                                        <f:selectItem itemLabel="NINGUNO" itemValue="#{null}" />
+
+                                        <f:selectItems value="#{tipoProductoFrm.listaTiposProducto}"
+                                                       var="tp"
+                                                       itemLabel="#{tp.nombre}"
+                                                       itemValue="#{tp}" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel for="chkActivo" value="Activo:" />
+                                    <p:selectBooleanCheckbox id="chkActivo" value="#{tipoProductoFrm.registro.activo}"/>
+
+                                    <p:outputLabel for="txtObservaciones" value="Observaciones:" />
+                                    <p:inputTextarea id="txtObservaciones" value="#{tipoProductoFrm.registro.comentarios}" size="80"/>
+
+                                    <p:commandButton
+                                            id="btnGuardar"
+                                            value="Guardar"
+                                            actionListener="#{tipoProductoFrm.btnGuardarHandler}"
+                                            rendered="#{tipoProductoFrm.estado=='CREAR'}"
+                                            process="@form"
+                                            update=":pnlDetalle :pnlTabla"
+                                            styleClass="ui-button-success"
+                                    />
+
+                                    <p:commandButton
+                                            id="btnModificar"
+                                            value="Modificar"
+                                            actionListener="#{tipoProductoFrm.btnModificarHandler}"
+                                            rendered="#{tipoProductoFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-secondary"
+                                            process="@form"
+                                            update=":pnlDetalle :pnlTabla "
+                                    />
+
+                                    <p:commandButton
+                                            id="btnEliminar"
+                                            value="Eliminar"
+                                            actionListener="#{tipoProductoFrm.btnEliminarHandler}"
+                                            rendered="#{tipoProductoFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-danger"
+                                            update=":frmTop :pnlDetalle :pnlTabla"
+                                    />
+                                </h:panelGrid>
+                            </h:form>
+                        </p:tab>
+
+                        <p:tab id="pnlCaracteristicaTipoProducto" closable="false" title="Caracteristicas" disabled="#{tipoProductoFrm.estado!='MODIFICAR'}">
+                            <ui:include src="TipoProductoCaracteristica.xhtml" />
+                        </p:tab>
+                    </p:tabView>
+                </h:panelGroup>
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</f:view>
+</html>
