@@ -22,4 +22,6 @@ public class AlmacenDAO extends InventarioDefaultDataAccess<Almacen, Integer> im
         return em;
     }
 
+
+
 }

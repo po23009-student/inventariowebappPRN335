@@ -6,25 +6,24 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
-public class AlmacenDAOTest {
+public class ProductoTipoProductoDAOTest {
     @Test
     public void testConstructor() {
-        AlmacenDAO almacenDAO = new AlmacenDAO();
-        assertNotNull(almacenDAO);
+        ProductoTipoProductoDAO ptpDAO = new ProductoTipoProductoDAO();
+        assertNotNull(ptpDAO);
     }
 
     @Test
     public void getEntityManagerTest() throws Exception {
-        AlmacenDAO almacenDAO = new AlmacenDAO();
+        ProductoTipoProductoDAO ptpDAO = new ProductoTipoProductoDAO();
         EntityManager mockEM = Mockito.mock(EntityManager.class);
 
-        var field = AlmacenDAO.class.getDeclaredField("em");
+        var field = ProductoTipoProductoDAO.class.getDeclaredField("em");
         field.setAccessible(true);
-        field.set(almacenDAO, mockEM);
+        field.set(ptpDAO, mockEM);
 
-        assertNotNull(almacenDAO.getEntityManager());
-        assertEquals(mockEM, almacenDAO.getEntityManager());
+        assertNotNull(ptpDAO.getEntityManager());
+        assertEquals(mockEM, ptpDAO.getEntityManager());
     }
-
 
 }
