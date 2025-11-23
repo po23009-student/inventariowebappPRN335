@@ -104,6 +104,7 @@ public abstract class InventarioDefaultDataAccess<T, ID> implements InventarioDA
         if (first < 0 || max <= 0) {
             throw new IllegalArgumentException("parametros no validos");
         }
+
         try {
             em = getEntityManager();
             if (em == null) {
