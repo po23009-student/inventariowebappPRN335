@@ -22,7 +22,7 @@ public class ReceptorKardex implements MessageListener {
     public void onMessage(Message message) {
         TextMessage textMessage = (TextMessage) message;
         try {
-            System.out.println("Mensaje recibido en ReceptorKardex: " + textMessage);
+            System.out.println("Mensaje recibido en ReceptorKardex: " + textMessage.getText());
             kardexEndpoint.enviarMensajeBroadcast(textMessage.getText());
         } catch(Exception e) {
             System.out.println("Exception: "+e);

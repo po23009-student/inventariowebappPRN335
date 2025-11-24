@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+>
+<f:view>
+    <h:head></h:head>
+    <h:body>
+        <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+            <ui:define name="titulo">#{recepcionKardexFrm.nombreBean}</ui:define>
+
+            <ui:define name="contenido">
+                <h1 class="tituloPagina">#{recepcionKardexFrm.nombreBean}</h1>
+
+                <p>#{recepcionKardexFrm.uuidRandom}</p>
+                <h:panelGroup id="pnlTabla" >
+                    <h:panelGrid>
+                        <h:form id="frmTop">
+                            <p:remoteCommand name="actualizar" update=":pnlTabla" actionListener="#{recepcionKardexFrm.actualizarTabla}" />
+
+                            <p:dataTable id="tabla-top"
+                                         value="#{recepcionKardexFrm.comprasPagadas}"
+                                         var="r"
+                                         selectionMode="single"
+                                         selection="#{recepcionKardexFrm.compraFrm.registro}"
+                                         rowKey="#{r.id}">
+                                <p:ajax event="rowSelect" listener="#{recepcionKardexFrm.compraFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
+                                <p:column>
+                                    #{r.id}
+                                    <f:facet name="header">ID</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.proveedor.nombre}
+                                    <f:facet name="header">Proveedor</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.estado}
+                                    <f:facet name="header">Estado</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.fecha}
+                                    <f:facet name="header">Fecha de Compra</f:facet>
+                                </p:column>
+                                <p:column>
+                                    #{r.observaciones}
+                                    <f:facet name="header">Observaciones</f:facet>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+                        </h:form>
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <script>
+                    var ws = new WebSocket("ws://localhost:9080/inventariowebappPRN335-1.0-SNAPSHOT/kardex");
+
+                    ws.onmessage = function(event) {
+                        let mensaje = event.data;
+                        console.log(mensaje);
+                        actualizar();
+                    };
+
+                    ws.onopen = e => {
+                        console.log("Conexión establecida con el WebSocket");
+                    }
+                </script>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </h:body>
+</f:view>
+</html>

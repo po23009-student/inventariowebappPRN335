@@ -186,20 +186,6 @@
                 </h:panelGroup>
             </ui:define>
 
-            <script>
-                var ws = new WebSocket("ws://localhost:9080/inventariowebappPRN335-1.0-SNAPSHOT/kardex");
-                ws.onmessage = function(event) {
-                    let mensaje = event.data;
-                    console.log(mensaje);
-                    actualizar();
-                    //location.reload();
-                }
-
-                ws.onopen()=(e) => {
-                    console.log("Conexión establecida con el servidor de WebSocket.");
-                };
-            </script>
-
         </ui:composition>
 
     </h:body>
