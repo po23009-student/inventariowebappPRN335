@@ -1,6 +1,5 @@
 package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
@@ -13,7 +12,6 @@ public class ProductoTipoProducto {
     @Column(name = "id_producto_tipo_producto", nullable = false)
     private UUID id;
 
-    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_producto")
     private Producto idProducto;

@@ -2,10 +2,12 @@ package po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tipo_producto")
-public class TipoProducto {
+public class TipoProducto implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipo_producto", nullable = false)
@@ -64,6 +66,24 @@ public class TipoProducto {
 
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TipoProducto that = (TipoProducto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return id != null ? id.hashCode() : 0;
     }
 
 }

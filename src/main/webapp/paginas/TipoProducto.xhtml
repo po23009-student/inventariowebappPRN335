@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+    <h:head>
+        <title>Tipos de Producto</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+            <ui:define name="titulo">#{tipoProductoFrm.nombreBean}</ui:define>
+
+            <ui:define name="contenido">
+
+                <h:form id="frmTipoProducto">
+                    <h1 class="tituloPagina">Tipos de Producto</h1>
+
+                    <p:growl id="growlGlobal" showDetail="true" showSummary="true" life="5000" />
+                    <h:panelGroup id="pnlPrincipal">
+
+                        <h:panelGroup id="pnlTabla" rendered="#{tipoProductoFrm.estado eq 'NADA'}">
+                            <p:treeTable id="tablaTiposProducto"
+                                         value="#{tipoProductoFrm.root}"
+                                         var="tipoProducto"
+                                         style="width:100%"
+                                         selectionMode="single"
+                                         selection="#{tipoProductoFrm.nodoSeleccionado}">
+                                <p:ajax event="select"
+                                        listener="#{tipoProductoFrm.treeNodeSelectionHandler}"
+                                        update="pnlPrincipal"/>
+
+                                <p:column headerText="Nombre" style="width:35%">
+                                    <h:outputText value="#{tipoProducto.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="ID" style="width:15%">
+                                    #{tipoProducto.id}
+                                </p:column>
+                                <p:column headerText="Estado" style="width:15%">
+                                    <p:tag value="#{tipoProducto.activo ? 'ACTIVO' : 'INACTIVO'}"
+                                           severity="#{tipoProducto.activo ? 'success' : 'danger'}"/>
+                                </p:column>
+                                <p:column headerText="Observaciones" style="width:35%">
+                                    #{tipoProducto.comentarios}
+                                </p:column>
+
+                                <p:rowExpansion>
+                                    <div style="padding: 10px; background: #e9ecef; margin-left: 20px;">
+                                        <h5 style="margin-top: 0px;">Productos Directos de #{tipoProducto.nombre}</h5>
+                                        <p:dataTable value="#{tipoProductoFrm.findProductosByTipo(tipoProducto.id)}"
+                                                     var="producto"
+                                                     rowKey="#{producto.id}" emptyMessage="No hay productos directos para este tipo">
+                                            <p:column headerText="ID Producto" style="width:30%">#{producto.id}</p:column>
+                                            <p:column headerText="Nombre Producto">#{producto.nombreProducto}</p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:rowExpansion>
+                            </p:treeTable>
+
+                            <p:commandButton id="btnToggleInactivos"
+                                             value="#{tipoProductoFrm.mostrarInactivos ? 'Ocultar Inactivos' : 'Mostrar Inactivos'}"
+                                             actionListener="#{tipoProductoFrm.toggleMostrarInactivos}"
+                                             update="tablaTiposProducto growlGlobal btnToggleInactivos"
+                                             process="@this"
+                                             icon="pi pi-filter"
+                                             styleClass="ui-button-info"
+                                             style="margin-top: 15px; margin-right: 10px;"/>
+
+                            <p:commandButton value="Nuevo Tipo de Producto"
+                                             actionListener="#{tipoProductoFrm.btnNuevoHandler}"
+                                             update="pnlPrincipal"
+                                             styleClass="ui-button-primary"
+                                             icon="pi pi-plus"
+                                             style="margin-top: 15px;"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{tipoProductoFrm.estado eq 'CREAR'}">
+                            <p:commandButton value="Cancelar Tipo de Producto"
+                                             actionListener="#{tipoProductoFrm.btnCancelarHandler}"
+                                             update="pnlPrincipal growlGlobal" process="@this"
+                                             styleClass="ui-button-flat ui-button-secondary"
+                                             icon="pi pi-times"
+                                             style="margin-bottom: 10px;"/>
+
+                            <p:tabView id="tabViewTipoProductoCrear" style="width:100%">
+                                <p:tab title="Generalidades" id="tabGeneralidadesCrear">
+
+                                    <h:panelGrid columns="2" cellpadding="10"
+                                                 styleClass="ui-fluid formulario-tipo-producto"
+                                                 style="width:100%">
+
+                                        <p:outputLabel value="ID:" />
+                                        <p:inputText id="txtIdSimuladoCrear" value="" disabled="true"
+                                                     style="width: 100px;"/>
+
+                                        <p:outputLabel for="txtNombreCrear" value="Nombre: *" />
+                                        <p:inputText id="txtNombreCrear"
+                                                     value="#{tipoProductoFrm.registro.nombre}"
+                                                     required="true"
+                                                     requiredMessage="El nombre es obligatorio"
+                                                     size="75"/>
+
+                                        <p:outputLabel for="selectTipoPadreCrear" value="Depende de:" />
+                                        <h:panelGroup>
+                                            <p:selectOneMenu id="selectTipoPadreCrear"
+                                                             value="#{tipoProductoFrm.registro.idTipoProductoPadre}"
+                                                             style="width: 400px"
+                                                             converter="tipoProductoConverter">
+                                                <f:selectItem itemLabel="NINGUNO (Raíz)" itemValue="#{null}" />
+                                                <f:selectItems value="#{tipoProductoFrm.tiposPadreDisponibles}"
+                                                               var="tipoPadre"
+                                                               itemLabel="#{tipoProductoFrm.getNombreJerarquico(tipoPadre)}"
+                                                               itemValue="#{tipoPadre}" />
+                                            </p:selectOneMenu>
+                                            <p:message for="selectTipoPadreCrear" style="color: red; display: block;"/>
+                                        </h:panelGroup>
+
+                                        <p:outputLabel value="Activo:" />
+                                        <p:selectBooleanCheckbox id="chkActivoCrear"
+                                                                 value="#{tipoProductoFrm.registro.activo}"
+                                                                 itemLabel=""/>
+
+                                        <p:outputLabel for="txtComentariosCrear" value="Observaciones:" />
+                                        <p:inputTextarea id="txtComentariosCrear"
+                                                         value="#{tipoProductoFrm.registro.comentarios}"
+                                                         rows="4"
+                                                         cols="75"/>
+
+                                    </h:panelGrid>
+
+                                    <h:panelGroup style="display:flex; align-items:center; gap:10px; margin-top:20px;">
+                                        <p:commandButton value="Guardar Tipo Producto"
+                                                         actionListener="#{tipoProductoFrm.btnGuardarHandler}"
+                                                         update="growlGlobal pnlPrincipal"
+                                                         process="@form"
+                                                         styleClass="ui-button-primary"
+                                                         icon="pi pi-save"/>
+                                        <p:message for="txtNombreCrear" style="color: red;"/>
+                                    </h:panelGroup>
+
+                                </p:tab>
+
+                                <p:tab title="Características" id="tabCaracteristicasCrear"
+                                       disabled="true">
+                                    <h:outputText value="La gestión de características estará disponible después de crear el tipo de producto."/>
+                                </p:tab>
+                            </p:tabView>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{tipoProductoFrm.estado eq 'MODIFICAR'}">
+
+                            <p:commandButton value="Cancelar"
+                                             actionListener="#{tipoProductoFrm.btnCancelarHandler}"
+                                             update="pnlPrincipal growlGlobal" process="@this"
+                                             styleClass="ui-button-flat ui-button-secondary"
+                                             icon="pi pi-times"
+                                             style="margin-bottom: 10px;"/>
+
+                            <p:tabView id="tabViewTipoProductoModificar" style="width:100%">
+                                <p:tab title="Generalidades" id="tabGeneralidadesModificar">
+                                    <h:panelGrid columns="2" cellpadding="10"
+                                                 styleClass="ui-fluid formulario-tipo-producto"
+                                                 style="width:100%">
+
+                                        <p:outputLabel value="ID:" />
+                                        <h:outputText value="#{tipoProductoFrm.registro.id}"
+                                                      style="font-weight: bold; width: 100px; display: inline-block;"/>
+
+                                        <p:outputLabel for="txtNombreMod" value="Nombre:" />
+                                        <p:inputText id="txtNombreMod"
+                                                     value="#{tipoProductoFrm.registro.nombre}"
+                                                     required="true"
+                                                     requiredMessage="El nombre es obligatorio"
+                                                     size="75"/>
+
+                                        <p:outputLabel for="selectTipoPadreMod" value="Depende de:" />
+                                        <h:panelGroup>
+                                            <p:selectOneMenu id="selectTipoPadreMod"
+                                                             value="#{tipoProductoFrm.registro.idTipoProductoPadre}"
+                                                             style="width: 400px"
+                                                             converter="tipoProductoConverter">
+                                                <f:selectItem itemLabel="NINGUNO (Raíz)" itemValue="#{null}" />
+                                                <f:selectItems value="#{tipoProductoFrm.tiposPadreDisponibles}"
+                                                               var="tipoPadre"
+                                                               itemLabel="#{tipoProductoFrm.getNombreJerarquico(tipoPadre)}"
+                                                               itemValue="#{tipoPadre}" />
+                                            </p:selectOneMenu>
+                                            <p:message for="selectTipoPadreMod" style="color: red; display: block;"/>
+                                        </h:panelGroup>
+
+                                        <p:outputLabel value="Activo:" />
+                                        <p:selectBooleanCheckbox id="chkActivoMod"
+                                                                 value="#{tipoProductoFrm.registro.activo}"
+                                                                 itemLabel=""/>
+
+                                        <p:outputLabel for="txtComentariosMod" value="Observaciones:" />
+                                        <p:inputTextarea id="txtComentariosMod"
+                                                         value="#{tipoProductoFrm.registro.comentarios}"
+                                                         rows="4"
+                                                         cols="75"/>
+                                    </h:panelGrid>
+
+                                    <h:panelGroup style="display:flex; align-items:center; gap:10px; margin-top:20px;">
+                                        <p:commandButton value="Modificar Tipo de Producto"
+                                                         actionListener="#{tipoProductoFrm.btnModificarHandler}"
+                                                         update="pnlPrincipal growlGlobal"
+                                                         process="@form"
+                                                         styleClass="ui-button-warning"
+                                                         icon="pi pi-pencil"/>
+                                        <p:commandButton value="Eliminar Tipo de Producto"
+                                                         actionListener="#{tipoProductoFrm.btnEliminarHandler}"
+                                                         update="pnlPrincipal growlGlobal"
+                                                         process="@this"
+                                                         styleClass="ui-button-danger"
+                                                         icon="pi pi-trash"/>
+                                        <p:message for="txtNombreMod" style="color: red;"/>
+                                    </h:panelGroup>
+                                </p:tab>
+
+                                <p:tab title="Características" id="tabCaracteristicasModificar">
+                                    <h:form id="frmCaracteristicas">
+                                        <p:outputPanel id="pnlCaracteristicas">
+
+                                            <h:panelGroup rendered="#{!tipoProductoFrm.mostrarFormularioCaracteristica}">
+
+                                                <h3>Características Asociadas</h3>
+
+                                                <p:dataTable value="#{tipoProductoFrm.listaTipoProductoCaracteristicas}"
+                                                             var="tpc"
+                                                             rowKey="#{tpc.id}"
+                                                             emptyMessage="No se encontraron características asociadas a este tipo de producto."
+                                                             rows="10"
+                                                             paginator="true"
+                                                             paginatorPosition="bottom"
+                                                             style="margin-bottom: 15px;">
+
+                                                    <p:column headerText="ID" style="width:10%">
+                                                        <h:outputText value="#{tpc.id}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Característica">
+                                                        <h:outputText value="#{tpc.idCaracteristica.nombre}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Obligatorio" style="width:10%; text-align: center;">
+                                                        <h:outputText value="#{tpc.obligatorio ? 'Sí' : 'No'}"
+                                                                      style="font-weight: lighter; color: #{tpc.obligatorio ? 'black' : 'black'};"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Fecha de Creación" style="width:20%">
+                                                        <h:outputText value="#{tpc.fechaCreacion.toLocalDateTime().format(tipoProductoFrm.formatter)}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Acción" style="width:10%; text-align: center;">
+                                                        <p:commandButton icon="pi pi-trash"
+                                                                         styleClass="ui-button-danger ui-button-flat"
+                                                                         title="Eliminar Asociación"
+                                                                         actionListener="#{tipoProductoFrm.btnEliminarCaracteristicaHandler(tpc)}"
+                                                                         update=":frmTipoProducto:pnlPrincipal growlGlobal"
+                                                                         process="@this">
+                                                            <p:confirm header="Confirmar" message="¿Está seguro de eliminar esta asociación?" icon="pi pi-exclamation-triangle" />
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                </p:dataTable>
+
+                                                <p:commandButton value="Nueva Caracteristica"
+                                                                 icon="pi pi-plus"
+                                                                 actionListener="#{tipoProductoFrm.btnNuevaCaracteristicaHandler}"
+                                                                 update="pnlCaracteristicas growlGlobal"
+                                                                 process="@this"
+                                                                 styleClass="ui-button-success"/>
+
+                                            </h:panelGroup>
+
+                                            <h:panelGroup rendered="#{tipoProductoFrm.mostrarFormularioCaracteristica}">
+
+                                                <h3>Asociar Nueva Característica</h3>
+
+                                                <h:panelGrid columns="2" cellpadding="10"> <p:outputLabel value="Tipo Producto:" />
+                                                    <h:outputText value="#{tipoProductoFrm.registro.nombre}" />
+
+                                                    <p:outputLabel value="Característica:" />
+                                                    <h:panelGroup layout="block" style="width: 400px;">
+                                                        <h:outputText value="#{tipoProductoFrm.caracteristicaSeleccionada != null ? tipoProductoFrm.caracteristicaSeleccionada.nombre : 'Ninguna seleccionada'}"
+                                                                      style="font-weight: bold; margin-right: 10px;"/>
+
+                                                        <p:commandButton value="Seleccionar"
+                                                                         type="button"
+                                                                         onclick="PF('dialogoBusquedaCaract').show()"
+                                                                         icon="pi pi-search"/>
+                                                    </h:panelGroup>
+
+                                                    <p:outputLabel for="chkObligatorio" value="Obligatorio:" />
+                                                    <p:selectBooleanCheckbox id="chkObligatorio" value="#{tipoProductoFrm.nuevaAsociacion.obligatorio}" />
+
+                                                    <p:outputLabel value="Fecha Creación:" />
+                                                    <h:outputText value="#{tipoProductoFrm.nuevaAsociacion.fechaCreacion.toLocalDateTime().format(tipoProductoFrm.formatter)}" />
+
+                                                </h:panelGrid>
+
+                                                <p:divider/>
+
+                                                <h:panelGroup layout="block" style="text-align: left; margin-top: 15px;">
+                                                    <p:commandButton value="Cancelar Característica"
+                                                                     actionListener="#{tipoProductoFrm.btnCancelarCaracteristicaHandler}"
+                                                                     update="pnlCaracteristicas growlGlobal"
+                                                                     styleClass="ui-button-secondary"
+                                                                     icon="pi pi-times"
+                                                                     process="@this"
+                                                                     style="margin-right: 10px;"/>
+
+                                                    <p:commandButton value="Guardar Asociación"
+                                                                     actionListener="#{tipoProductoFrm.btnGuardarNuevaCaracteristicaHandler}"
+                                                                     update="pnlCaracteristicas growlGlobal"
+                                                                     process="@form"
+                                                                     styleClass="ui-button-success"
+                                                                     icon="pi pi-save"
+                                                                     disabled="#{tipoProductoFrm.caracteristicaSeleccionada == null}"/>
+                                                </h:panelGroup>
+
+                                            </h:panelGroup>
+
+                                        </p:outputPanel>
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+                        </h:panelGroup>
+
+                    </h:panelGroup>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="300">
+                        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times" />
+                    </p:confirmDialog>
+                    <p:dialog header="Buscar Característica"
+                              widgetVar="dialogoBusquedaCaract"
+                              modal="true"
+                              responsive="true"
+                              width="600">
+
+                        <p:outputPanel id="pnlBusquedaCaract">
+                            <p:dataTable id="tablaCaracteristicasDisponibles"
+                                         value="#{tipoProductoFrm.caracteristicaDAO.findTodos()}"
+                                         var="caract"
+                                         selectionMode="single"
+                                         rowKey="#{caract.id}"
+                                         rows="10" paginator="true">
+
+                                <p:ajax event="rowSelect"
+                                        listener="#{tipoProductoFrm.seleccionarCaracteristica}"
+                                        update=":frmTipoProducto:tabViewTipoProductoModificar:frmCaracteristicas:pnlCaracteristicas growlGlobal"
+                                        oncomplete="PF('dialogoBusquedaCaract').hide()"/>
+
+                                <p:column headerText="ID" style="width:10%">
+                                    <h:outputText value="#{caract.id}" />
+                                </p:column>
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{caract.nombre}" />
+                                </p:column>
+                                <p:column headerText="Activo" style="width:15%">
+                                    <p:selectBooleanCheckbox value="#{caract.activo}" disabled="true"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:outputPanel>
+
+                    </p:dialog>
+
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</f:view>
+</html>

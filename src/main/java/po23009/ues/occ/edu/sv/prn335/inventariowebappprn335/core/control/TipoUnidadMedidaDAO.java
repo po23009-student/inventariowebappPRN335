@@ -37,10 +37,19 @@ public class TipoUnidadMedidaDAO extends InventarioDefaultDataAccess<TipoUnidadM
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<TipoUnidadMedida> cq = cb.createQuery(TipoUnidadMedida.class);
         Root<Caracteristica> caracteristicaRoot = cq.from(Caracteristica.class);
+
+
         cq.select(caracteristicaRoot.get("idTipoUnidadMedida")).where(cb.equal(caracteristicaRoot.get("id"), caracteristica.getId()));
         TypedQuery<TipoUnidadMedida> query = em.createQuery(cq);
 
-        return query.getSingleResult();
+
+        List<TipoUnidadMedida> resultados = query.getResultList();
+
+        if (resultados.isEmpty()) {
+            return null;
+        }
+
+        return resultados.get(0);
     }
 
 }

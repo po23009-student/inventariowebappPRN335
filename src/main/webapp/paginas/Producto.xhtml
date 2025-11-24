@@ -1,143 +1,443 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="es"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="jakarta.faces.core"
       xmlns:h="jakarta.faces.html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
->
+      xmlns:p="http://primefaces.org/ui">
 <f:view>
-    <h:head></h:head>
+    <h:head>
+        <title>Productos</title>
+        <style>
+            .list-col { width: 45%; }
+            .button-col { width: 10%; text-align: center; }
+        </style>
+
+        <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    </h:head>
     <h:body>
+
         <ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
-            <ui:define name="titulo">#{productoFrm.nombreBean}</ui:define>
+            <ui:define name="titulo">Producto</ui:define>
 
             <ui:define name="contenido">
-                <h1 class="tituloPagina">#{productoFrm.nombreBean}</h1>
 
-                <h:panelGroup id="pnlTabla">
-                    <h:panelGrid>
-                        <h:form id="frmTop" rendered="#{productoFrm.estado=='NADA'}">
-                            <p:dataTable id="tabla-top"
+                <h:form id="frmGlobal">
+
+                    <h1 class="tituloPagina">Productos</h1>
+
+                    <p:growl id="growlGlobal" globalOnly="true" showDetail="true" life="5000" />
+
+                    <h:panelGroup id="pnlPrincipal">
+
+                        <h:panelGroup id="pnlTabla" rendered="#{productoFrm.estado eq 'NADA'}">
+                            <p:dataTable id="tabla-productos"
                                          lazy="true"
+                                         first="#{productoFrm.firstRow}"
                                          rows="#{productoFrm.pageSize}"
                                          paginator="true"
                                          paginatorPosition="bottom"
                                          value="#{productoFrm.modelo}"
-                                         var="r"
+                                         var="producto"
                                          selectionMode="single"
-                                         selection="#{productoFrm.registro}" rowKey="#{r.id}">
-                                <p:ajax event="rowSelect" listener="#{productoFrm.selectionHandler}" update=":pnlTabla :pnlDetalle"/>
-                                <p:column>
-                                    #{r.id}
-                                    <f:facet name="header">ID</f:facet>
+                                         selection="#{productoFrm.registro}"
+                                         rowKey="#{producto.id}"
+                                         style="width:100%">
+
+                                <p:ajax event="rowSelect"
+                                        listener="#{productoFrm.selectionHandler}"
+                                        update=":frmGlobal:pnlPrincipal"/>
+
+                                <p:ajax event="rowUnselect"
+                                        listener="#{productoFrm.btnCancelarHandler}"
+                                        update=":frmGlobal:pnlPrincipal" />
+
+                                <p:column headerText="ID" style="width: 25%;">
+                                    <h:outputText value="#{producto.id}" />
                                 </p:column>
-                                <p:column>
-                                    #{r.nombreProducto}
-                                    <f:facet name="header">Nombre</f:facet>
+
+                                <p:column headerText="Nombre" style="width: 25%;">
+                                    <h:outputText value="#{producto.nombreProducto}" />
                                 </p:column>
-                                <p:column>
-                                    #{r.activo?"Activo":"Inactivo"}
-                                    <f:facet name="header">Estado</f:facet>
+
+                                <p:column headerText="Activo" style="width: 10%; text-align: center;">
+                                    <h:outputText value="#{producto.activo ? 'ACTIVO' : 'INACTIVO'}" />
                                 </p:column>
-                                <p:column>
-                                    #{r.referenciaExterna}
-                                    <f:facet name="header">Referencia Externa</f:facet>
+
+                                <p:column headerText="Observaciones" style="width: 30%;">
+                                    <h:outputText value="#{producto.comentarios}" />
                                 </p:column>
-                                <p:column>
-                                    #{r.comentarios}
-                                    <f:facet name="header">Comentarios</f:facet>
+
+                                <p:column headerText="Ref. Externa" style="width: 25%;">
+                                    <h:outputText value="#{producto.referenciaExterna}" />
                                 </p:column>
+
                             </p:dataTable>
 
-                            <p:commandButton
-                                    id="btnNuevo"
-                                    value="Nuevo Producto"
-                                    actionListener="#{productoFrm.btnNuevoHandler}"
-                                    update=":pnlDetalle :pnlTabla"
-                            />
+                            <p:commandButton value="Nuevo Producto"
+                                             actionListener="#{productoFrm.btnNuevoHandler}"
+                                             update=":frmGlobal:pnlPrincipal"
+                                             process="@this" styleClass="ui-button-primary"
+                                             icon="pi pi-plus"
+                                             style="margin-top: 10px;"/>
+                        </h:panelGroup>
 
-                            <p:messages id="msgs" redisplay="false" showDetail="true" showSummary="false" closable="true" />
-                        </h:form>
+                        <h:panelGroup rendered="#{productoFrm.estado eq 'CREAR' or productoFrm.estado eq 'MODIFICAR'}">
 
-                    </h:panelGrid>
-                </h:panelGroup>
+                            <p:commandButton value="Cancelar Producto"
+                                             actionListener="#{productoFrm.btnCancelarHandler}"
+                                             update=":frmGlobal:pnlPrincipal"
+                                             process="@this"
+                                             styleClass="ui-button-flat ui-button-secondary"
+                                             icon="pi pi-times"
+                                             style="margin-bottom: 10px;"/>
 
-                <h:panelGroup id="pnlDetalle">
-                    <h:form>
-                        <p:commandButton
-                                id="btnCancelar"
-                                value="Cancelar"
-                                actionListener="#{productoFrm.btnCancelarHandler}"
-                                styleClass="ui-button-warning"
-                                rendered="#{productoFrm.estado!='NADA'}"
-                                update=":pnlDetalle :pnlTabla"
-                                process="@this"
-                        />
+                            <p:tabView id="tabViewProducto" widgetVar="productoTabView" style="width:100%">
+                                <p:tab title="Generalidades" id="tabGeneralidades">
+                                    <h:panelGrid columns="2" cellpadding="10"
+                                                 styleClass="ui-fluid formulario-producto"
+                                                 style="width:100%">
+                                        <p:outputLabel value="ID:" />
+                                        <h:outputText value="#{productoFrm.registro.id}" style="font-weight: lighter;"/>
+
+                                        <p:outputLabel for="txtNombre" value="Nombre: " />
+                                        <p:inputText id="txtNombre"
+                                                     value="#{productoFrm.registro.nombreProducto}"
+                                                     required="true"
+                                                     requiredMessage="El nombre es obligatorio"
+                                                     size="75"/>
+
+                                        <p:outputLabel value="Activo:" />
+                                        <p:selectBooleanCheckbox id="chkActivo"
+                                                                 value="#{productoFrm.registro.activo}"
+                                                                 itemLabel="Activo"/>
+
+                                        <p:outputLabel for="txtComentarios" value="Comentarios:" />
+                                        <p:inputTextarea id="txtComentarios"
+                                                         value="#{productoFrm.registro.comentarios}"
+                                                         rows="4"
+                                                         cols="60"/>
+
+                                        <p:outputLabel for="txtReferencia" value="Referencia Externa:" />
+                                        <p:inputText id="txtReferencia"
+                                                     value="#{productoFrm.registro.referenciaExterna}"
+                                                     size="75"/>
+                                    </h:panelGrid>
+
+                                    <h:panelGroup style="display:flex; align-items:center; gap:10px; margin-top:20px;">
+                                        <p:commandButton value="Guardar Producto"
+                                                         rendered="#{productoFrm.estado eq 'CREAR'}"
+                                                         actionListener="#{productoFrm.btnGuardarHandler}"
+                                                         update=":frmGlobal:pnlPrincipal :frmGlobal:growlGlobal @form"
+                                                         process="@form"
+                                                         styleClass="ui-button-primary"
+                                                         icon="pi pi-save"/>
+
+                                        <p:commandButton value="Modificar"
+                                                         rendered="#{productoFrm.estado eq 'MODIFICAR'}"
+                                                         actionListener="#{productoFrm.btnModificarHandler}"
+                                                         update=":frmGlobal:pnlPrincipal :frmGlobal:growlGlobal"
+                                                         process="@form"
+                                                         styleClass="ui-button-warning"
+                                                         icon="pi pi-pencil"/>
+
+                                        <p:commandButton value="Eliminar"
+                                                         rendered="#{productoFrm.estado eq 'MODIFICAR'}"
+                                                         actionListener="#{productoFrm.btnEliminarHandler}"
+                                                         update=":frmGlobal:pnlPrincipal :frmGlobal:growlGlobal"
+                                                         process="@this"
+                                                         styleClass="ui-button-danger"
+                                                         icon="pi pi-trash"/>
+
+                                        <p:message for="txtNombre" style="color: red;"/>
+                                    </h:panelGroup>
+                                </p:tab>
+
+                                <p:tab title="Tipos de Producto" id="tabTipos" disabled="#{productoFrm.estado eq 'CREAR'}">
+                                    <p:outputPanel id="pnlTiposProducto">
+                                        <h:panelGroup rendered="#{productoFrm.estadoAsociacion eq 'LISTA'}">
+                                            <h3>Tipos de Producto Asociados a "#{productoFrm.registro.nombreProducto}"</h3>
+
+                                            <p:dataTable value="#{productoFrm.listaProductoTipoProducto}"
+                                                         var="ptp"
+                                                         rowKey="#{ptp.id}"
+                                                         selectionMode="single"
+                                                         selection="#{productoFrm.nuevaAsociacion}"
+                                                         rows="10"
+                                                         paginator="true"
+                                                         paginatorPosition="bottom"
+                                                         emptyMessage="No hay tipos de producto asociados a este producto."
+                                                         style="margin-bottom: 15px;"
+                                                         lazy="false">
+
+                                                <p:ajax event="rowSelect"
+                                                        listener="#{productoFrm.selectionAsociacionHandler}"
+                                                        update=":frmGlobal:tabViewProducto:pnlTiposProducto :frmGlobal:growlGlobal"/>
+
+                                                <p:column headerText="ID" style="width:30%">
+                                                    <h:outputText value="#{ptp.id}" />
+                                                </p:column>
+                                                <p:column headerText="Tipo" style="width:20%">
+                                                    <h:outputText value="#{ptp.idTipoProducto.nombre}" />
+                                                </p:column>
+                                                <p:column headerText="Fecha de Creación" style="width:15%">
+                                                    <h:outputText value="#{ptp.fechaCreacion.toLocalDateTime().format(productoFrm.formatter)}" />
+                                                </p:column>
+                                                <p:column headerText="Estado" style="width:8%; text-align: center;">
+                                                    <h:outputText value="#{ptp.activo ? 'Activo' : 'Inactivo'}" style="font-weight: bold; color: #{ptp.activo ? 'green' : 'red'};"/>
+                                                </p:column>
+                                                <p:column headerText="Observaciones" style="width:32%">
+                                                    <h:outputText value="#{ptp.observaciones}" />
+                                                </p:column>
+                                                <p:column headerText="Acción" style="width:10%; text-align: center;">
+                                                    <p:commandButton icon="pi pi-trash"
+                                                                     styleClass="ui-button-danger ui-button-flat"
+                                                                     title="Eliminar Asociación"
+                                                                     actionListener="#{productoFrm.btnEliminarAsociacionHandler(ptp)}"
+                                                                     update=":frmGlobal:growlGlobal :frmGlobal:tabViewProducto:pnlTiposProducto"
+                                                                     process="@this"
+                                                                     oncomplete="PF('productoTabView').select(1);">
+                                                        <p:confirm header="Confirmar" message="¿Desea desasociar este Tipo de Producto?" icon="pi pi-exclamation-triangle" />
+                                                    </p:commandButton>
+                                                </p:column>
+                                            </p:dataTable>
+
+                                            <p:commandButton value="Asociar Nuevo Tipo"
+                                                             icon="pi pi-plus"
+                                                             actionListener="#{productoFrm.btnNuevoTipoProductoHandler}"
+                                                             update=":frmGlobal:tabViewProducto:pnlTiposProducto"
+                                                             process="@this"
+                                                             styleClass="ui-button-success"/>
+
+                                        </h:panelGroup>
+
+                                        <h:panelGroup rendered="#{productoFrm.estadoAsociacion eq 'CREAR' or productoFrm.estadoAsociacion eq 'MODIFICAR'}">
+                                            <h3 style="margin-top: 0;">#{productoFrm.estadoAsociacion eq 'CREAR' ? 'Asociar Nuevo' : 'Modificar'} Tipo de Producto a "#{productoFrm.registro.nombreProducto}"</h3>
+
+                                            <h:panelGrid columns="2" cellpadding="15" style="width:100%; margin-bottom: 10px;">
+                                                <p:outputLabel for="btnSeleccionarTipo" value="Tipo de Producto:" />
+                                                <h:panelGroup layout="line" style="display: flex; align-items: center; gap: 20px; flex-wrap: nowrap;">
+                                                    <span style="white-space: nowrap;">
+                                                        <h:outputText value="#{productoFrm.tipoProductoSeleccionado.nombre != null ? productoFrm.tipoProductoSeleccionado.nombre : '(Ninguno seleccionado)'}"
+                                                                      style="font-weight: bold;"/>
+                                                    </span>
+                                                    <p:commandButton id="btnSeleccionarTipo"
+                                                                     value="Seleccionar Tipo"
+                                                                     type="button"
+                                                                     onclick="PF('dlgSeleccionTipo').show()"
+                                                                     icon="pi pi-search"
+                                                                     disabled="#{productoFrm.estadoAsociacion eq 'MODIFICAR'}"
+                                                                     styleClass="ui-button-raised"/>
+                                                </h:panelGroup>
+                                            </h:panelGrid>
+
+                                            <p:outputPanel id="pnlCaracteristicasFull"
+                                                           rendered="#{productoFrm.tipoProductoSeleccionado != null}"
+                                                           style="width: 100%; margin-bottom: 15px;">
+
+                                                <p:outputLabel value="Características" style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px;"/>
+
+                                                <h:panelGrid columns="3" style="width: 100%;" columnClasses="list-col, button-col, list-col">
+
+                                                    <h:panelGroup layout="block">
+                                                        <p:outputLabel value="Disponibles (Opcionales)" style="font-weight: bold; display: block; margin-bottom: 5px;"/>
+                                                        <p:dataTable value="#{productoFrm.caracteristicasDisponiblesParaAsociacion}"
+                                                                     var="tpc"
+                                                                     selectionMode="single"
+                                                                     selection="#{productoFrm.caracteristicaDisponibleSeleccionada}"
+                                                                     rowKey="#{tpc.id}"
+                                                                     rows="5"
+                                                                     paginator="false"
+                                                                     emptyMessage="No hay opcionales disponibles."
+                                                                     style="width: 100%;"
+                                                                     lazy="false"
+                                                                     id="dtDisponibles">
+
+                                                            <p:ajax event="rowSelect"
+                                                                    listener="#{productoFrm.caracteristicaDisponibleSelectHandler}"
+                                                                    update=":frmGlobal:growlGlobal :frmGlobal:tabViewProducto:pnlTiposProducto :frmGlobal:tabViewProducto:btnAgregarCaracteristica :frmGlobal:tabViewProducto:btnEliminarCaracteristica"/>
+
+                                                            <p:column headerText="Característica">
+                                                                <h:outputText value="#{tpc.idCaracteristica.nombre}" />
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </h:panelGroup>
+
+                                                    <h:panelGroup layout="block" style="text-align: center; padding-top: 50px;">
+                                                        <p:commandButton id="btnAgregarCaracteristica"
+                                                                         value="→ Agregar"
+                                                                         actionListener="#{productoFrm.btnAgregarCaracteristicaOpcional}"
+                                                                         update=":frmGlobal:tabViewProducto:pnlTiposProducto :frmGlobal:growlGlobal"
+                                                                         process="@form"
+                                                                         disabled="#{productoFrm.caracteristicaDisponibleSeleccionada == null}"
+                                                                         icon="pi pi-arrow-right"
+                                                                         style="margin-bottom: 5px;"/>
+
+                                                        <p:commandButton id="btnEliminarCaracteristica"
+                                                                         value="← Eliminar"
+                                                                         actionListener="#{productoFrm.btnEliminarCaracteristicaAsignada}"
+                                                                         update=":frmGlobal:tabViewProducto:pnlTiposProducto :frmGlobal:growlGlobal"
+                                                                         process="@form"
+                                                                         title="Eliminar solo características opcionales añadidas"
+                                                                         disabled="#{productoFrm.caracteristicaAsignadaSeleccionada == null or (productoFrm.caracteristicaAsignadaSeleccionada.idTipoProductoCaracteristica.obligatorio != null and productoFrm.caracteristicaAsignadaSeleccionada.idTipoProductoCaracteristica.obligatorio)}"
+                                                                         icon="pi pi-arrow-left"/>
+                                                    </h:panelGroup>
+
+                                                    <h:panelGroup layout="block">
+                                                        <p:outputLabel value="Asignadas" style="font-weight: bold; display: block; margin-bottom: 5px;"/>
+                                                        <p:dataTable value="#{productoFrm.caracteristicasAsignadasTemporalmente}"
+                                                                     var="ptpc"
+                                                                     selectionMode="single"
+                                                                     selection="#{productoFrm.caracteristicaAsignadaSeleccionada}"
+                                                                     rowKey="#{ptpc.id}"
+                                                                     rows="5"
+                                                                     paginator="false"
+                                                                     emptyMessage="No hay características asignadas."
+                                                                     style="width: 100%;"
+                                                                     lazy="false" id="dtAsignadas">
+
+                                                            <p:ajax event="rowSelect"
+                                                                    listener="#{productoFrm.caracteristicaAsignadaSelectHandler}"
+                                                                    update=":frmGlobal:growlGlobal :frmGlobal:tabViewProducto:pnlTiposProducto :frmGlobal:tabViewProducto:btnEliminarCaracteristica :frmGlobal:tabViewProducto:btnAgregarCaracteristica"/>
+
+                                                            <p:column headerText="Característica" style="width: 70%;">
+                                                                <h:outputText value="#{ptpc.idTipoProductoCaracteristica.idCaracteristica.nombre}" />
+                                                                <h:outputText value=" (Obligatoria)" rendered="#{ptpc.idTipoProductoCaracteristica.obligatorio}" style="font-style: italic; color: #777;"/>
+                                                            </p:column>
+
+                                                            <p:column headerText="Valor Asignado" style="width: 30%;">
+                                                                <h:outputText value="#{ptpc.valor}" />
+                                                                <h:outputText value=" #{ptpc.idTipoProductoCaracteristica.idCaracteristica.idTipoUnidadMedida.unidadBase}"
+                                                                              rendered="#{ptpc.valor != null and !ptpc.valor.isEmpty() and ptpc.idTipoProductoCaracteristica.idCaracteristica.idTipoUnidadMedida != null}"
+                                                                              style="font-style: italic; color: #555;"/>
+                                                            </p:column>
+
+                                                        </p:dataTable>
+                                                    </h:panelGroup>
+                                                </h:panelGrid>
+
+                                                <p:outputPanel id="pnlEdicionValorCaracteristica"
+                                                               rendered="#{productoFrm.caracteristicaParaEdicionValor != null}"
+                                                               style="margin-top: 20px;">
+
+                                                    <div class="card" style="padding: 15px; border: 1px solid #ccc; border-radius: 6px;">
+                                                        <h4>Modificar Valor: #{productoFrm.caracteristicaParaEdicionValor.idTipoProductoCaracteristica.idCaracteristica.nombre}</h4>
+                                                        <h:panelGrid columns="3" cellpadding="10" style="width: 100%;">
+
+                                                            <p:outputLabel for="txtValor" value="Valor:" />
+                                                            <p:inputText id="txtValor"
+                                                                         value="#{productoFrm.caracteristicaParaEdicionValor.valor}"
+                                                                         required="false"
+                                                                         placeholder="Ingrese el valor..."/>
+
+                                                            <p:commandButton value="Guardar Valor"
+                                                                             actionListener="#{productoFrm.btnGuardarValorCaracteristicaHandler}"
+                                                                             update=":frmGlobal:growlGlobal :frmGlobal:tabViewProducto:pnlTiposProducto"
+                                                                             process="@form"
+                                                                             icon="pi pi-save"
+                                                                             styleClass="ui-button-success"/>
+                                                        </h:panelGrid>
+
+                                                        <p:commandButton value="Limpiar Valor"
+                                                                         actionListener="#{productoFrm.btnLimpiarValorCaracteristicaHandler}"
+                                                                         update=":frmGlobal:growlGlobal :frmGlobal:tabViewProducto:pnlTiposProducto"
+                                                                         process="@form"
+                                                                         icon="pi pi-times"
+                                                                         styleClass="ui-button-danger"
+                                                                         style="margin-top: 10px;"/>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </p:outputPanel>
+
+                                            <h:panelGrid columns="2" cellpadding="15" style="width:100%; margin-bottom: 15px; margin-top: 20px;">
+                                                <p:outputLabel for="chkActivoNueva" value="Activo:" />
+                                                <p:selectBooleanCheckbox id="chkActivoNueva" value="#{productoFrm.nuevaAsociacion.activo}" itemLabel="Activo"/>
+
+                                                <p:outputLabel value="Fecha de Creación:" />
+                                                <h:outputText value="#{productoFrm.nuevaAsociacion.fechaCreacion.toLocalDateTime().format(productoFrm.formatter)}" style="font-weight: lighter;"/>
+
+                                                <p:outputLabel for="txtComentariosNueva" value="Observaciones/Comentarios:" />
+                                                <p:inputTextarea id="txtComentariosNueva"
+                                                                 value="#{productoFrm.nuevaAsociacion.observaciones}"
+                                                                 rows="3" cols="60"
+                                                                 style="width: 100%; max-width: 400px;"/>
+                                            </h:panelGrid>
+
+                                            <h:panelGroup style="display:flex; gap:10px; margin-top:20px;">
+                                                <p:commandButton value="Guardar Asociación"
+                                                                 rendered="#{productoFrm.estadoAsociacion eq 'CREAR'}"
+                                                                 actionListener="#{productoFrm.btnGuardarNuevaAsociacionHandler}"
+                                                                 update=":frmGlobal:tabViewProducto:pnlTiposProducto :frmGlobal:growlGlobal"
+                                                                 process="@form"
+                                                                 oncomplete="PF('productoTabView').select(1);"
+                                                                 styleClass="ui-button-success"
+                                                                 icon="pi pi-save"
+                                                                 disabled="#{productoFrm.tipoProductoSeleccionado == null}"/>
+
+                                                <p:commandButton value="Modificar Asociación"
+                                                                 rendered="#{productoFrm.estadoAsociacion eq 'MODIFICAR'}"
+                                                                 actionListener="#{productoFrm.btnModificarAsociacionHandler}"
+                                                                 update=":frmGlobal:tabViewProducto:pnlTiposProducto :frmGlobal:growlGlobal"
+                                                                 process="@form"
+                                                                 oncomplete="PF('productoTabView').select(1);"
+                                                                 styleClass="ui-button-warning"
+                                                                 icon="pi pi-pencil"/>
+
+                                                <p:commandButton value="Cancelar"
+                                                                 actionListener="#{productoFrm.btnCancelarAsociacionHandler}"
+                                                                 update=":frmGlobal:tabViewProducto:pnlTiposProducto"
+                                                                 process="@this"
+                                                                 icon="pi pi-times"
+                                                                 styleClass="ui-button-secondary"/>
+                                            </h:panelGroup>
+                                        </h:panelGroup>
+                                    </p:outputPanel>
+                                </p:tab>
+
+                            </p:tabView>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                </h:form>
+                <p:dialog header="Seleccionar Tipo de Producto"
+                          widgetVar="dlgSeleccionTipo"
+                          modal="true"
+                          responsive="true"
+                          width="600">
+                    <h:form id="frmSeleccionTipo">
+                        <p:outputPanel id="pnlTablaTiposSeleccion">
+                            <p:dataTable id="tablaTiposDisponibles"
+                                         value="#{productoFrm.tipoProductoDAO.findTodos()}"
+                                         var="tp"
+                                         selectionMode="single"
+                                         rowKey="#{tp.id}"
+                                         rows="5" paginator="true"
+                                         lazy="false"
+                                         emptyMessage="No hay tipos de producto disponibles.">
+
+                                <p:column headerText="ID" style="width:25%">#{tp.id}</p:column>
+                                <p:column headerText="Nombre">#{tp.nombre}</p:column>
+
+                                <p:column headerText="Acción" style="width:15%">
+                                    <p:commandButton value="Elegir"
+                                                     actionListener="#{productoFrm.seleccionarTipoProducto(tp)}"
+                                                     update=":frmGlobal:tabViewProducto:pnlTiposProducto"
+                                                     oncomplete="PF('dlgSeleccionTipo').hide()"
+                                                     process="@this"
+                                                     styleClass="ui-button-raised"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
                     </h:form>
+                </p:dialog>
 
-                    <p:tabView id="tabProducto" cache="false" dynamic="true" rendered="#{productoFrm.estado!='NADA'}">
-                        <p:tab closable="false" title="Generalidades">
-                            <h:form id="frmCrear">
-                                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" showSummary="false" closable="true" />
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="300">
+                    <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times" />
+                </p:confirmDialog>
 
-                                <h:panelGrid>
-                                    <p:outputLabel for="txtId" value="ID:" />
-                                    <p:inputText id="txtId" value="#{productoFrm.registro.id}" readonly="true" disabled="true"/>
-
-                                    <p:outputLabel for="txtNombreProducto" value="Nombre:" />
-                                    <p:inputText id="txtNombreProducto" value="#{productoFrm.registro.nombreProducto}"/>
-
-                                    <p:outputLabel for="txtRefExterna" value="Referencia Externa:"/>
-                                    <p:inputText id="txtRefExterna" value="#{productoFrm.registro.referenciaExterna}" size="75"/>
-
-                                    <p:outputLabel for="chkActivo" value="Activo:"/>
-                                    <p:selectBooleanCheckbox id="chkActivo" value="#{productoFrm.registro.activo}"/>
-
-                                    <p:outputLabel for="txtComentarios" value="Comentarios:"/>
-                                    <p:inputTextarea id="txtComentarios" value="#{productoFrm.registro.comentarios}" size="80"/>
-
-                                    <p:commandButton
-                                            id="btnGuardar"
-                                            value="Guardar"
-                                            actionListener="#{productoFrm.btnGuardarHandler}"
-                                            rendered="#{productoFrm.estado=='CREAR'}"
-                                            process="@form"
-                                            update=":pnlDetalle :pnlTabla"
-                                            styleClass="ui-button-success"
-                                    />
-
-                                    <p:commandButton
-                                            id="btnModificar"
-                                            value="Modificar"
-                                            actionListener="#{productoFrm.btnModificarHandler}"
-                                            rendered="#{productoFrm.estado=='MODIFICAR'}"
-                                            styleClass="ui-button-secondary"
-                                            process="@form"
-                                            update=":pnlDetalle :pnlTabla "
-                                    />
-
-                                    <p:commandButton
-                                            id="btnEliminar"
-                                            value="Eliminar"
-                                            actionListener="#{productoFrm.btnEliminarHandler}"
-                                            rendered="#{productoFrm.estado=='MODIFICAR'}"
-                                            styleClass="ui-button-danger"
-                                            update=":frmTop :pnlDetalle :pnlTabla"
-                                    />
-                                </h:panelGrid>
-                            </h:form>
-                        </p:tab>
-
-                        <p:tab id="pnlTipoProducto" closable="false" title="Tipos de Producto" disabled="#{productoFrm.estado!='MODIFICAR'}">
-
-                        </p:tab>
-                    </p:tabView>
-                </h:panelGroup>
             </ui:define>
-
         </ui:composition>
-
     </h:body>
 </f:view>
 </html>
