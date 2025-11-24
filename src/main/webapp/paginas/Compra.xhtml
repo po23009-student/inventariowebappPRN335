@@ -123,6 +123,7 @@
                                         <f:selectItem itemLabel="APROBADA" itemValue="APROBADA" />
                                         <f:selectItem itemLabel="RECHAZADA" itemValue="RECHAZADA" />
                                         <f:selectItem itemLabel="ANULADA" itemValue="ANULADA" />
+                                        <f:selectItem itemLabel="PAGADA" itemValue="PAGADA" />
                                     </p:selectOneMenu>
 
                                     <p:outputLabel for="dpFecha" value="Fecha"/>
@@ -140,6 +141,14 @@
                                     <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
                                     <p:inputTextarea id="txtObservaciones" value="#{compraFrm.registro.observaciones}" size="80"/>
 
+                                    <p:commandButton
+                                            id="btnCerrarCompra"
+                                            value="Cerrar compra"
+                                            actionListener="#{compraFrm.notificarCambioKardex}"
+                                            rendered="#{compraFrm.estado=='MODIFICAR'}"
+                                            styleClass="ui-button-secondary"
+                                            update=":pnlDetalle :pnlTabla"
+                                    />
                                     <p:commandButton
                                             id="btnGuardar"
                                             value="Guardar"

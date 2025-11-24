@@ -117,16 +117,12 @@ public class CompraFrm extends DefaultFrm<Compra, Long> implements Serializable 
         }
     }
 
-    @Override
-    public void btnModificarHandler(ActionEvent actionEvent) {
-        boolean notificar = (this.registro != null && this.registro.getEstado().equals("CREADA"));
-
-        super.btnModificarHandler(actionEvent);
-
-        if(notificar) {
-            notificadorKardex.notificarCambioKardex("Compra creada");
+    public void notificarCambioKardex(ActionEvent actionEvent) {
+        if(this.registro != null && this.registro.getId() != null) {
+            this.registro.setEstado("PAGADA");
+            super.btnModificarHandler(actionEvent);
+            notificadorKardex.notificarCambioKardex("Cambio en compra con ID: "+this.registro.getId());
         }
-
     }
 
     public Proveedor getProveedorSeleccionado() {
