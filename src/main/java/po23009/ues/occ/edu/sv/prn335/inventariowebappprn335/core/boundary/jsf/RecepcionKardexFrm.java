@@ -125,5 +125,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra, Long> implements Seri
 
     public void actualizarTabla(ActionEvent actionEvent) {
         System.out.println("Actualizando tabla");
+        this.setComprasPagadas(compraDAO.comprasPagadas());
+        this.setUuidRandom(UUID.randomUUID());
     }
 }

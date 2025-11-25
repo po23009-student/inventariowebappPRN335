@@ -15,11 +15,13 @@
             <ui:define name="contenido">
                 <h1 class="tituloPagina">#{recepcionKardexFrm.nombreBean}</h1>
 
-                <p>#{recepcionKardexFrm.uuidRandom}</p>
                 <h:panelGroup id="pnlTabla" >
+
+                    <p>#{recepcionKardexFrm.uuidRandom}</p>
+
                     <h:panelGrid>
                         <h:form id="frmTop">
-                            <p:remoteCommand name="actualizar" update=":pnlTabla" actionListener="#{recepcionKardexFrm.actualizarTabla}" />
+                            <p:remoteCommand name="actualizar" update="pnlTabla" actionListener="#{recepcionKardexFrm.actualizarTabla}" />
 
                             <p:dataTable id="tabla-top"
                                          value="#{recepcionKardexFrm.comprasPagadas}"
