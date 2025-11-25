@@ -9,9 +9,10 @@ import jakarta.faces.convert.FacesConverter;
 import jakarta.inject.Inject;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.TipoProductoDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.TipoProducto;
-
+import jakarta.enterprise.context.Dependent;
 
 @FacesConverter(value = "tipoProductoConverter", managed = true)
+@Dependent
 public class TipoProductoConverter implements Converter<TipoProducto> {
 
 
