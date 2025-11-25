@@ -5,7 +5,9 @@ import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.TipoProducto;
 
 import java.util.Collections;
@@ -34,92 +36,89 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, L
         return em;
     }
 
-
-    public List<TipoProducto> findTodos() {
-        return em.createQuery("SELECT t FROM TipoProducto t ORDER BY t.nombre", TipoProducto.class)
-                .getResultList();
-    }
-
-
     public List<TipoProducto> findTiposPadre(boolean incluirInactivos) {
-        String jpql = "SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre IS NULL";
-        if (!incluirInactivos) {
-            jpql += " AND t.activo = true";
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<TipoProducto> cq = cb.createQuery(TipoProducto.class);
+        Root<TipoProducto> t = cq.from(TipoProducto.class);
+        if (incluirInactivos) {
+            cq.where(cb.isNull(t.get("idTipoProductoPadre")));
+        } else {
+            cq.where(cb.and(
+                    cb.isNull(t.get("idTipoProductoPadre")),
+                    cb.isTrue(t.get("activo"))
+            ));
         }
-        jpql += " ORDER BY t.nombre";
-        return em.createQuery(jpql, TipoProducto.class).getResultList();
+        cq.select(t)
+                .orderBy(cb.asc(t.get("nombre")));
+        return em.createQuery(cq).getResultList();
     }
 
     public List<TipoProducto> findHijosByPadre(Long idTipoProductoPadre, boolean incluirInactivos) {
         if (idTipoProductoPadre == null) {
             return Collections.emptyList();
         }
-        String jpql = "SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre.id = :padreId";
-        if (!incluirInactivos) {
-
-            jpql += " AND t.activo = true";
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<TipoProducto> cq = cb.createQuery(TipoProducto.class);
+        Root<TipoProducto> t = cq.from(TipoProducto.class);
+        if (incluirInactivos) {
+            cq.where(cb.equal(t.get("idTipoProductoPadre").get("id"), idTipoProductoPadre));
+        } else {
+            cq.where(cb.and(
+                    cb.equal(t.get("idTipoProductoPadre").get("id"), idTipoProductoPadre),
+                    cb.isTrue(t.get("activo"))
+            ));
         }
-        jpql += " ORDER BY t.nombre";
-        return em.createQuery(jpql, TipoProducto.class)
-                .setParameter("padreId", idTipoProductoPadre)
-                .getResultList();
+        cq.select(t)
+                .orderBy(cb.asc(t.get("nombre")));
+        return em.createQuery(cq).getResultList();
     }
-
 
     public boolean existeNombre(String nombre, Long id) {
         if (nombre == null || nombre.trim().isEmpty()) {
             return false;
         }
-
-        String queryStr = "SELECT COUNT(t) FROM TipoProducto t WHERE t.nombre = :nombre";
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<TipoProducto> t = cq.from(TipoProducto.class);
+        cq.select(cb.count(t));
+        jakarta.persistence.criteria.Predicate nombrePredicate = cb.equal(t.get("nombre"), nombre.trim());
         if (id != null) {
-            queryStr += " AND t.id != :id";
+            cq.where(cb.and(
+                    nombrePredicate,
+                    cb.notEqual(t.get("id"), id)
+            ));
+        } else {
+            cq.where(nombrePredicate);
         }
-
-        TypedQuery<Long> query = em.createQuery(queryStr, Long.class);
-        query.setParameter("nombre", nombre.trim());
-
-        if (id != null) {
-            query.setParameter("id", id);
-        }
-
-        return query.getSingleResult() > 0;
+        return em.createQuery(cq).getSingleResult() > 0;
     }
-
 
     public boolean tieneHijos(Long id) {
         if (id == null) return false;
-
         try {
-            Long count = em.createQuery(
-                            "SELECT COUNT(t) FROM TipoProducto t WHERE t.idTipoProductoPadre.id = :padreId", Long.class)
-                    .setParameter("padreId", id)
-                    .getSingleResult();
-
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<TipoProducto> t = cq.from(TipoProducto.class);
+            cq.select(cb.count(t))
+                    .where(cb.equal(t.get("idTipoProductoPadre").get("id"), id));
+            Long count = em.createQuery(cq).getSingleResult();
             return count > 0;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error al verificar si el tipo de producto tiene hijos: " + id, e);
-
             return true;
         }
     }
 
-
     @Override
     public void eliminar(TipoProducto entidad) throws IllegalStateException {
-
         try {
             int count = tipoProductoCaracteristicaDAO.eliminarPorTipoProducto(entidad.getId());
             LOG.log(Level.INFO, "Se eliminaron {0} TipoProductoCaracteristica asociados al TipoProducto ID: {1}",
                     new Object[]{count, entidad.getId()});
-
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error al eliminar hijos de TipoProducto ID: " + entidad.getId(), e);
-
+            LOG.log(Level.SEVERE, "Error al eliminar características asociadas al TipoProducto ID: " + entidad.getId(), e);
             throw new IllegalStateException("Fallo al eliminar características asociadas.", e);
         }
-
         super.eliminar(entidad);
     }
-
 }

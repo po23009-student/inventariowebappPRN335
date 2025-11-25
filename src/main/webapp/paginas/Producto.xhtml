@@ -407,7 +407,7 @@
                     <h:form id="frmSeleccionTipo">
                         <p:outputPanel id="pnlTablaTiposSeleccion">
                             <p:dataTable id="tablaTiposDisponibles"
-                                         value="#{productoFrm.tipoProductoDAO.findTodos()}"
+                                         value="#{productoFrm.todosLosTiposProducto}"
                                          var="tp"
                                          selectionMode="single"
                                          rowKey="#{tp.id}"

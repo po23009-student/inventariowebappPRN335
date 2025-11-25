@@ -49,7 +49,7 @@
 
                                 <p:rowExpansion>
                                     <div style="padding: 10px; background: #e9ecef; margin-left: 20px;">
-                                        <h5 style="margin-top: 0px;">Productos Directos de #{tipoProducto.nombre}</h5>
+                                        <h5 style="margin-top: 0;">Productos Directos de #{tipoProducto.nombre}</h5>
                                         <p:dataTable value="#{tipoProductoFrm.findProductosByTipo(tipoProducto.id)}"
                                                      var="producto"
                                                      rowKey="#{producto.id}" emptyMessage="No hay productos directos para este tipo">
@@ -343,7 +343,7 @@
 
                         <p:outputPanel id="pnlBusquedaCaract">
                             <p:dataTable id="tablaCaracteristicasDisponibles"
-                                         value="#{tipoProductoFrm.caracteristicaDAO.findTodos()}"
+                                         value="#{tipoProductoFrm.todasLasCaracteristicas}"
                                          var="caract"
                                          selectionMode="single"
                                          rowKey="#{caract.id}"
