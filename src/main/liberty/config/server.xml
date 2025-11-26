@@ -4,6 +4,7 @@
     <!-- Enable features -->
     <featureManager>
         <feature>jakartaee-10.0</feature>
+        <feature>jdbc-4.2</feature>
     </featureManager>
 
     <!-- This template enables security. To get the full use of all the capabilities, a keystore and user registry are required. -->
@@ -35,24 +36,27 @@
 
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime --> 
     <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
-	
-	<dataSource id="DefaultDataSource" 
-		    jdbcDriverRef="postgres-driver" 
-                    jndiName="jdbc/pgdb"
-		    type="javax.sql.ConnectionPoolDataSource"
-		    transactional="true"
- 	>
-		<properties
-			serverName="localhost"
-			portNumber="5432"
-			user="postgres"
-			password="abc123"
-			databaseName="inventario_prn335"
-		/>
-			
-	</dataSource>
 
-	<messagingEngine>
+    <library id="postgres-driver">
+        <fileset dir="${server.config.dir}/resources" includes="postgresql.jar"/>
+    </library>
+
+    <dataSource id="DefaultDataSource"
+                jdbcDriverRef="postgres-driver"
+                jndiName="jdbc/pgdb"
+                type="javax.sql.ConnectionPoolDataSource"
+                transactional="true">
+        <properties
+                serverName="postgres"
+                portNumber="5432"
+                user="postgres"
+                password="abc123"
+                databaseName="inventario_prn335"
+        />
+    </dataSource>
+
+
+    <messagingEngine>
 		<queue id='QUEUE1'/>
 	</messagingEngine>
 
