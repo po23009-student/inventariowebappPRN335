@@ -1,0 +1,132 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="jakarta.faces.html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:form id="frmProductoTipoProductoCaracteristicaCompleto">
+
+        <h1 class="tituloPagina">#{productoFrm.registro.nombreProducto}</h1>
+
+        <h:panelGroup id="pnlProductoTipoProductoCaracteristicas" layout="block">
+
+            <h:panelGroup id="pnlTablaCaracteristicasProducto" rendered="#{productoTipoProductoCaracteristicaFrm.estado=='NADA'}">
+                <p:dataTable
+                        id="tablaCaracteristicasProducto"
+                        var="ptpc"
+                        value="#{productoTipoProductoCaracteristicaFrm.modelo}"
+                        selectionMode="single"
+                        selection="#{productoTipoProductoCaracteristicaFrm.registro}"
+                        rowKey="#{ptpc.id}"
+                        paginator="true"
+                        paginatorPosition="bottom"
+                        rows="#{productoTipoProductoCaracteristicaFrm.pageSize}"
+                        emptyMessage="No hay caracteristicas registradas para este tipo de producto">
+
+                    <p:ajax event="rowSelect" listener="#{productoTipoProductoCaracteristicaFrm.selectionHandler}" update="pnlProductoTipoProductoCaracteristicas" />
+
+                    <p:column headerText="ID">#{ptpc.id}</p:column>
+                    <p:column headerText="Característica">#{ptpc.valor}</p:column>
+                    <p:column headerText="Obligatoria">#{ptpc.observaciones}</p:column>
+                </p:dataTable>
+
+                <p:commandButton
+                        id="btnNuevo"
+                        value="Nuevo Tipo de Producto"
+                        styleClass="ui-button"
+                        actionListener="#{productoTipoProductoCaracteristicaFrm.btnNuevoHandler}"
+                        process="@this"
+                        update="pnlProductoTipoProductoCaracteristicas"/>
+
+                <p:messages id="msgs" autoUpdate="true" redisplay="false" showDetail="true" closable="true"/>
+            </h:panelGroup>
+
+            <h:panelGroup id="pnlDetalleTipoProducto" rendered="#{productoTipoProductoCaracteristicaFrm.estado!='NADA'}">
+                <p:commandButton
+                        id="btnCancelar"
+                        value="Cancelar"
+                        actionListener="#{productoTipoProductoCaracteristicaFrm.btnCancelarHandler}"
+                        styleClass="ui-button-warning"
+                        process="@this"
+                        update="pnlProductoTipoProductoCaracteristicas"
+                />
+
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel for="txtId" value="ID:"/>
+                    <p:inputText id="txtId" value="#{productoTipoProductoCaracteristicaFrm.registro.id}" readonly="true" disabled="true"/>
+
+                    <p:outputLabel for="txtTipoProducto" value="Tipo de Producto:" />
+                    <p:commandButton value="Seleccionar" type="button" icon="pi pi-external-link" onclick="PF('dlg1').show()"/>
+
+                    <p:dialog header="Seleccionar Tipo de Producto" widgetVar="dlg1" minHeight="10" width="350" showEffect="fade" modal="true" closeOnEscape="true">
+                        <p:autoComplete
+                                id="acSimple"
+                                value="#{productoTipoProductoCaracteristicaFrm.tipoProductoSeleccionado}"
+                                completeMethod="#{productoTipoProductoCaracteristicaFrm.completeText}"
+                                var="tipoProducto"
+                                itemLabel="#{tipoProducto.nombre}"
+                                itemValue="#{tipoProducto}"
+                                forceSelection="true"
+                                scrollHeight="250"
+                        />
+
+                        <p:commandButton
+                                id="btnSeleccionarTipoProducto"
+                                value="Seleccionar"
+                                process="@this acSimple"
+                                update="txtTipoProducto"
+                                actionListener="#{productoTipoProductoCaracteristicaFrm.btnSeleccionarTipoProducto}"
+                                oncomplete="PF('dlg1').hide()"
+                        />
+
+                    </p:dialog>
+
+                    <p:outputLabel for="chkActivo" value="Estado:"/>
+                    <p:selectBooleanCheckbox id="chkActivo" value=""/>
+
+                    <p:outputLabel for="dpFecha" value="Fecha"/>
+                    <p:datePicker id="dpFecha"
+                                  value=""
+                                  showTime="true"
+                                  hourFormat="24"
+                                  timeInput="true"
+                                  timeZone="America/El_Salvador"
+                                  pattern="yyyy-MM-dd'T'HH:mm"
+                                  converter="offsetDateTimeConverter"
+                                  requiredMessage="La fecha es obligatoria"
+                                  touchUI="false" />
+
+                    <p:outputLabel for="txtComentarios" value="Comentarios:"/>
+                    <p:inputTextarea id="txtComentarios" value="#{productoTipoProductoCaracteristicaFrm.registro.observaciones}" size="80"/>
+
+                </h:panelGrid>
+
+                <p:commandButton
+                        id="btnGuardar"
+                        value="Guardar"
+                        actionListener="#{productoTipoProductoCaracteristicaFrm.btnGuardarHandler}"
+                        rendered="#{productoTipoProductoCaracteristicaFrm.estado=='CREAR'}"
+                        process="@form"
+                        styleClass="ui-button-success"
+                        update="pnlProductoTipoProductoCaracteristicas"/>
+
+                <p:commandButton
+                        id="btnModificar"
+                        value="Modificar"
+                        actionListener="#{productoTipoProductoCaracteristicaFrm.btnModificarHandler}"
+                        rendered="#{productoTipoProductoCaracteristicaFrm.estado=='MODIFICAR'}"
+                        process="@form"
+                        styleClass="ui-button-secondary"
+                        update="pnlProductoTipoProductoCaracteristicas"/>
+
+                <p:commandButton
+                        id="btnEliminar"
+                        value="Eliminar"
+                        actionListener="#{productoTipoProductoCaracteristicaFrm.btnEliminarHandler}"
+                        rendered="#{productoTipoProductoCaracteristicaFrm.estado=='MODIFICAR'}"
+                        styleClass="ui-button-danger"
+                        update="pnlProduct.nombreBeanoTipoProductoCaracteristicas"/>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</ui:composition>

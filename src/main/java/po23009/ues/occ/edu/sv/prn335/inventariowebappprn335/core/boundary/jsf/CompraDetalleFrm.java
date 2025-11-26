@@ -101,9 +101,8 @@ public class CompraDetalleFrm extends DefaultFrm<CompraDetalle, UUID> implements
     @Override
     public void btnGuardarHandler(ActionEvent event) {
         if (productoSeleccionado == null || productoSeleccionado.getId() == null) {
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar un producto válido"));
-            return; // Evita persistir un producto inválido
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar un producto válido"));
+            return;
         }
 
         registro.setIdProducto(productoSeleccionado);

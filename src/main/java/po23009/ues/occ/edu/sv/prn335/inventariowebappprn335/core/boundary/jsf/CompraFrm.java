@@ -9,6 +9,7 @@ import org.primefaces.event.SelectEvent;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDetalleDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.NotificadorKardex;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Proveedor;
@@ -27,6 +28,9 @@ public class CompraFrm extends DefaultFrm<Compra, Long> implements Serializable 
 
     @Inject
     private CompraDetalleDAO compraDetalleDAO;
+
+    @Inject
+    NotificadorKardex notificadorKardex;
 
     private List<CompraDetalle> detallesPorCompra;
     private Proveedor proveedorSeleccionado;
@@ -108,9 +112,16 @@ public class CompraFrm extends DefaultFrm<Compra, Long> implements Serializable 
     public void btnSeleccionarProv(ActionEvent actionEvent) {
         if (proveedorSeleccionado != null) {
             this.registro.setProveedor(proveedorSeleccionado);
-            System.out.println("Proveedor seleccionado: " + proveedorSeleccionado.getNombre());
         } else {
             System.out.println("No se seleccionó ningún proveedor");
+        }
+    }
+
+    public void notificarCambioKardex(ActionEvent actionEvent) {
+        if(this.registro != null && this.registro.getId() != null) {
+            this.registro.setEstado("PAGADA");
+            super.btnModificarHandler(actionEvent);
+            notificadorKardex.notificarCambioKardex("Cambio en compra con ID: "+this.registro.getId());
         }
     }
 

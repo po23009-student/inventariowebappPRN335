@@ -32,11 +32,11 @@ public class TipoAlmacenDAO extends InventarioDefaultDataAccess<TipoAlmacen, Int
             return null;
         }
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<TipoAlmacen> cq = cb.createQuery(TipoAlmacen.class);
         Root<Almacen> almacenRoot = cq.from(Almacen.class);
         cq.select(almacenRoot.get("idTipoAlmacen")).where(cb.equal(almacenRoot.get("id"), almacen.getId()));
-        TypedQuery<TipoAlmacen> query = em.createQuery(cq);
+        TypedQuery<TipoAlmacen> query = getEntityManager().createQuery(cq);
 
         return query.getSingleResult();
     }

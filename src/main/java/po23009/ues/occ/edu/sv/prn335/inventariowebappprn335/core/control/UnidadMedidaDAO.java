@@ -5,6 +5,9 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.UnidadMedida;
 
 import java.io.Serializable;
@@ -25,9 +28,12 @@ public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida, I
     }
 
     public List<UnidadMedida> findByTipo(Integer idTipoUnidadMedida) {
-        TypedQuery<UnidadMedida> q = em.createQuery(
-                "SELECT u FROM UnidadMedida u WHERE u.idTipoUnidadMedida.id = :idTipo", UnidadMedida.class);
-        q.setParameter("idTipo", idTipoUnidadMedida);
-        return q.getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<UnidadMedida> cq = cb.createQuery(UnidadMedida.class);
+        Root<UnidadMedida> unidad = cq.from(UnidadMedida.class);
+        cq.select(unidad).where(cb.equal(unidad.get("idTipoUnidadMedida").get("id"), idTipoUnidadMedida));
+        TypedQuery<UnidadMedida> query = em.createQuery(cq);
+
+        return query.getResultList();
     }
 }
