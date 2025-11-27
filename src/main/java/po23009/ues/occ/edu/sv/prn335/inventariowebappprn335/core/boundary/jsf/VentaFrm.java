@@ -10,6 +10,9 @@ import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.Inventa
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.VentaDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.VentaDetalleDAO;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.*;
+import jakarta.faces.application.FacesMessage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.Serializable;
 import java.util.List;
@@ -108,6 +111,80 @@ public class VentaFrm extends DefaultFrm<Venta, UUID> implements Serializable {
             System.out.println("No se seleccionó ningún cliente");
         }
     }
+
+    public void btnGuardarHandler(ActionEvent event) {
+        FacesContext fc = getFacesContext();
+
+        if (registro == null) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No hay registro para guardar."));
+            return;
+        }
+
+        try {
+            if (ESTADO_CRUD.CREAR.equals(estado)) {
+                getDAO().crear(registro);
+            } else if (ESTADO_CRUD.MODIFICAR.equals(estado)) {
+                getDAO().modificar(registro);
+            } else {
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Estado no válido para guardar."));
+                return;
+            }
+
+            if (detallesPorVenta != null && !detallesPorVenta.isEmpty()) {
+                for (VentaDetalle detalle : detallesPorVenta) {
+
+                    if (detalle.getIdVenta() == null) {
+                        detalle.setIdVenta(registro);
+                    }
+
+                    ventaDetalleDAO.crear(detalle);
+                }
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Venta y Detalles guardados."));
+            } else {
+
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Venta guardada sin detalles de producto."));
+            }
+
+            this.registro = null;
+            this.clienteSeleccionado = null;
+            this.estado = ESTADO_CRUD.NADA;
+
+        } catch (Exception e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Fallo al guardar la Venta: " + e.getMessage()));
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, "Error en btnGuardarHandler", e);
+        }
+    }
+
+    @Override
+    public void btnEliminarHandler(ActionEvent event) {
+        FacesContext fc = getFacesContext();
+
+        if (getRegistro() == null) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta", "Seleccione una venta para eliminar."));
+            return;
+        }
+
+        try {
+            if (!ventaDAO.puedeEliminar(getRegistro().getId())) {
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                        "No se puede eliminar la venta porque ya ha sido DESPACHADA."));
+                return;
+            }
+
+            getDAO().eliminar(getRegistro());
+
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Venta eliminada correctamente."));
+
+            this.registro = null;
+            this.estado = ESTADO_CRUD.NADA;
+
+        } catch (Exception e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "Error al eliminar la venta: " + e.getMessage()));
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, "Error en btnEliminarHandler", e);
+        }
+    }
+
 
     public VentaDAO getVentaDAO() {
         return ventaDAO;

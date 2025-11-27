@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../WEB-INF/plantillas/template-comun.xhtml">
+    <ui:define name="titulo">Despacho de Ventas</ui:define>
+
+    <ui:define name="contenido">
+
+        <h:form id="frmDespachoVenta">
+            <h1 class="tituloPagina">Gestión de Despachos Pendientes</h1>
+
+            <p:growl id="growlGlobal" showDetail="true" showSummary="true" life="5000" />
+
+            <h:panelGroup id="pnlTablaPrincipal" rendered="#{despachoVentaFrm.estado eq 'NADA'}">
+
+                <p:dataTable id="tablaVentas"
+                             value="#{despachoVentaFrm.modelo}"
+                             var="venta"
+                             lazy="true"
+                             selection="#{despachoVentaFrm.registro}"
+                             selectionMode="single"
+                             rowKey="#{venta.id}"
+                             rows="#{despachoVentaFrm.pageSize}"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             emptyMessage="No hay ventas pendientes de despacho">
+
+                    <p:ajax event="rowSelect"
+                            update=":frmDespachoVenta:btnDespachar :frmDespachoVenta:growlGlobal" />
+
+                    <p:ajax event="rowUnselect"
+                            update=":frmDespachoVenta:btnDespachar :frmDespachoVenta:growlGlobal" />
+
+                    <p:column headerText="ID Venta" style="width:30%">
+                        <h:outputText value="#{venta.id}" />
+                    </p:column>
+                    <p:column headerText="Fecha">
+                        <h:outputText value="#{venta.fecha}">
+                            <f:converter converterId="offsetDateTimeConverter" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Estado">
+                        <p:tag value="#{venta.estado}" />
+                    </p:column>
+                    <p:column headerText="Observaciones">
+                        <h:outputText value="#{venta.observaciones}" />
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:commandButton id="btnDespachar"
+                                 value="Enviar a Despacho"
+                                 icon="pi pi-truck"
+                                 actionListener="#{despachoVentaFrm.btnDespacharHandler}"
+
+                                 update=":frmDespachoVenta:growlGlobal :frmDespachoVenta:btnDespachar :mensajes"
+
+                                 process="@this"
+                                 styleClass="ui-button-success"
+                                 style="margin-top: 15px;"
+
+                                 disabled="#{despachoVentaFrm.registro eq null or despachoVentaFrm.registro.id eq null}" />
+
+            </h:panelGroup>
+
+        </h:form>
+
+        <p:messages id="mensajes" globalOnly="true" showDetail="true" closable="true"/>
+
+        <p:remoteCommand name="actualizarTablaDespacho"
+                         actionListener="#{despachoVentaFrm.actualizarTabla}"
+                         update=":frmDespachoVenta:tablaVentas :frmDespachoVenta:btnDespachar :frmDespachoVenta:growlGlobal"
+                         process="@this"/>
+
+        <script>
+            //<![CDATA[
+            let ws = null;
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
+
+            function connectWebSocket() {
+                const wsURL = "ws://#{request.serverName}:#{request.serverPort}#{request.contextPath}/ventaDespachoWS";
+
+                try {
+                    ws = new WebSocket(wsURL);
+
+                    ws.onopen = function(event) {
+                        console.log(" WebSocket de Despacho CONECTADO");
+                        reconnectAttempts = 0;
+                    };
+
+                    ws.onmessage = function(event) {
+                        const mensaje = event.data;
+                        console.log(" Mensaje WebSocket recibido:", mensaje);
+
+                        if (mensaje && mensaje.startsWith("DESPACHADA:")) {
+                            const idVenta = mensaje.split(':')[1];
+                            console.log(" Actualizando tabla para venta:", idVenta);
+
+                            actualizarTablaDespacho();
+
+                            if (window.PF && PF('growlGlobal')) {
+                                PF('growlGlobal').show([{
+                                    summary: '¡Éxito!',
+                                    detail: 'Venta ' + idVenta + ' ha sido DESPACHADA correctamente.',
+                                    severity: 'success'
+                                }]);
+                            }
+
+                            PrimeFaces.ajax.update(':frmDespachoVenta:tablaVentas :frmDespachoVenta:btnDespachar :frmDespachoVenta:growlGlobal');
+
+                            console.log("Venta despachada:", idVenta);
+                        }
+                    };
+
+                    ws.onerror = function(e) {
+                        console.error("Error en WebSocket:", e);
+                    };
+
+                    ws.onclose = function(e) {
+                        console.log("WebSocket cerrado:", e.code, e.reason);
+
+                        if (reconnectAttempts < maxReconnectAttempts) {
+                            reconnectAttempts++;
+                            console.log(`Intentando reconectar... (${reconnectAttempts}/${maxReconnectAttempts})`);
+                            setTimeout(connectWebSocket, 3000);
+                        } else {
+                            console.error("Máximo de intentos de reconexión alcanzado");
+                        }
+                    };
+
+                } catch (e) {
+                    console.error("Error al conectar WebSocket:", e);
+                }
+            }
+
+            // Conectar cuando la página cargue
+            document.addEventListener('DOMContentLoaded', connectWebSocket);
+
+            // Limpiar conexión
+            window.addEventListener('beforeunload', function() {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.close();
+                }
+            });
+            //]]>
+
+        </script>
+    </ui:define>
+</ui:composition>
+</html>
