@@ -6,14 +6,13 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.CompraDAO;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.InventarioDefaultDataAccess;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.NotificadorKardex;
+import org.primefaces.event.SelectEvent;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.control.*;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Compra;
+import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.CompraDetalle;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 @Named
 @ViewScoped
@@ -22,16 +21,36 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra, Long> implements Seri
     FacesContext facesContext;
 
     @Inject
+    KardexDAO kardexDAO;
+
+    @Inject
     CompraDAO compraDAO;
+
+    @Inject
+    CompraDetalleDAO compraDetalleDAO;
 
     @Inject
     CompraFrm compraFrm;
 
     @Inject
+    CompraDetalleFrm compraDetalleFrm;
+
+    @Inject
     NotificadorKardex notificadorKardex;
 
     List<Compra> comprasPagadas;
-    UUID uuidRandom;
+    Compra compraSeleccionada;
+    List<CompraDetalle> detallesCompraSeleccionada;
+    CompraDetalle compraDetalleSeleccionado;
+    boolean guardarEnBodega;
+
+    public void cargarDetallesCompra() {
+        if (registro != null && registro.getId() != null) {
+            this.setDetallesCompraSeleccionada(compraDetalleDAO.findByCompra(registro.getId()));
+        } else {
+            this.setDetallesCompraSeleccionada(null);
+        }
+    }
 
     public RecepcionKardexFrm() {}
 
@@ -39,7 +58,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra, Long> implements Seri
     public void init() {
         this.nombreBean = "Recibir Productos";
         this.setComprasPagadas(compraDAO.comprasPagadas());
-        this.setUuidRandom(UUID.randomUUID());
+        this.setGuardarEnBodega(false);
     }
 
     @Override
@@ -83,6 +102,24 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra, Long> implements Seri
         return null;
     }
 
+    @Override
+    public void selectionHandler(SelectEvent<Compra> r) {
+        if (r != null) {
+            this.registro = r.getObject();
+            this.setCompraSeleccionada(r.getObject());
+            cargarDetallesCompra();
+            this.estado = ESTADO_CRUD.MODIFICAR;
+        }
+    }
+
+    public void seleccionarCompraDetalle(SelectEvent<CompraDetalle> r) {
+        if (r != null) {
+            this.setCompraDetalleSeleccionado(r.getObject());
+            this.setGuardarEnBodega(true);
+            System.out.println(this.getCompraDetalleSeleccionado());
+        }
+    }
+
     public List<Compra> getComprasPagadas() {
         return comprasPagadas;
     }
@@ -115,17 +152,56 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra, Long> implements Seri
         this.compraFrm = compraFrm;
     }
 
-    public UUID getUuidRandom() {
-        return uuidRandom;
-    }
-
-    public void setUuidRandom(UUID uuidRandom) {
-        this.uuidRandom = uuidRandom;
-    }
-
     public void actualizarTabla(ActionEvent actionEvent) {
         System.out.println("Actualizando tabla");
         this.setComprasPagadas(compraDAO.comprasPagadas());
-        this.setUuidRandom(UUID.randomUUID());
+    }
+
+    public Compra getCompraSeleccionada() {
+        return compraSeleccionada;
+    }
+
+    public void setCompraSeleccionada(Compra compraSeleccionada) {
+        this.compraSeleccionada = compraSeleccionada;
+    }
+
+    public List<CompraDetalle> getDetallesCompraSeleccionada() {
+        return detallesCompraSeleccionada;
+    }
+
+    public void setDetallesCompraSeleccionada(List<CompraDetalle> detallesCompraSeleccionada) {
+        this.detallesCompraSeleccionada = detallesCompraSeleccionada;
+    }
+
+    public CompraDetalleFrm getCompraDetalleFrm() {
+        return compraDetalleFrm;
+    }
+
+    public void setCompraDetalleFrm(CompraDetalleFrm compraDetalleFrm) {
+        this.compraDetalleFrm = compraDetalleFrm;
+    }
+
+    public CompraDetalleDAO getCompraDetalleDAO() {
+        return compraDetalleDAO;
+    }
+
+    public void setCompraDetalleDAO(CompraDetalleDAO compraDetalleDAO) {
+        this.compraDetalleDAO = compraDetalleDAO;
+    }
+
+    public CompraDetalle getCompraDetalleSeleccionado() {
+        return compraDetalleSeleccionado;
+    }
+
+    public void setCompraDetalleSeleccionado(CompraDetalle compraDetalleSeleccionado) {
+        this.compraDetalleSeleccionado = compraDetalleSeleccionado;
+    }
+
+    public boolean isGuardarEnBodega() {
+        return guardarEnBodega;
+    }
+
+    public void setGuardarEnBodega(boolean guardarEnBodega) {
+        this.guardarEnBodega = guardarEnBodega;
     }
 }

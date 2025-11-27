@@ -9,7 +9,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Caracteristica;
-import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.Producto;
 import po23009.ues.occ.edu.sv.prn335.inventariowebappprn335.core.entity.TipoUnidadMedida;
 
 import java.io.Serializable;

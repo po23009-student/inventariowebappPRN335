@@ -1,0 +1,65 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="jakarta.faces.html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:form id="frmKardexDetalleCompleto">
+        <h:panelGroup id="pnlKardexDetalle" layout="block">
+            <p:commandButton
+                    id="btnCancelar"
+                    value="Cancelar"
+                    actionListener="#{kardexDetalleFrm.btnCancelarHandler}"
+                    process="@this"
+                    update=":pnlKardexDetalle :pnlDetalleCompra"
+                    styleClass="ui-button-warning"
+            />
+
+
+            <h:panelGrid columns="2" cellpadding="5">
+                <p:outputLabel for="txtId" value="DETALLE ID:"/>
+                <p:inputText id="txtId" value="#{kardexDetalleFrm.recepcionKardexFrm.compraDetalleSeleccionado.id}" readonly="true" disabled="true" size="80"/>
+
+                <p:outputLabel for="txtNombreProducto" value="Producto:"/>
+                <p:inputText id="txtNombreProducto" value="#{kardexDetalleFrm.recepcionKardexFrm.compraDetalleSeleccionado.idProducto.nombreProducto}" readonly="true" disabled="true"/>
+
+                <p:outputLabel for="txtCantidad" value="Cantidad:"/>
+                <p:inputText id="txtCantidad" value="#{kardexDetalleFrm.recepcionKardexFrm.compraDetalleSeleccionado.cantidad}" size="75" disabled="true"/>
+
+                <p:outputLabel for="txtPrecio" value="Precio:"/>
+                <p:inputText id="txtPrecio" value="$ #{kardexDetalleFrm.recepcionKardexFrm.compraDetalleSeleccionado.precio}" disabled="true"/>
+
+                <p:outputLabel for="soAlmacen" value="Almacen:"/>
+                    <p:selectOneMenu id="soAlmacen"
+                                 value="#{kardexDetalleFrm.almacenSeleccionado}"
+                                 converter="almacenRKConverter"
+                                 required="true"
+                                 requiredMessage="Debe seleccionar un almacen"
+                >
+                    <f:selectItems value="#{kardexDetalleFrm.listaAlmacenes}"
+                                   var="alm"
+                                   itemLabel="#{alm.idTipoAlmacen.nombre}"
+                                   itemValue="#{alm}"
+                    />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="txtReferenciaExt" value="Referencia Externa:"/>
+                <p:inputText id="txtReferenciaExt" value="#{kardexDetalleFrm.registro.referenciaExterna}" size="75"/>
+
+                <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
+                <p:inputTextarea id="txtObservaciones" value="#{kardexDetalleFrm.registro.observaciones}" size="80"/>
+
+            </h:panelGrid>
+
+            <p:commandButton
+                    id="btnGuardar"
+                    value="Guardar en Bodega"
+                    actionListener="#{kardexDetalleFrm.btnGuardarHandler}"
+                    process="@form"
+                    styleClass="ui-button-success"
+                    update="frmKardexDetalleCompleto pnlKardexDetalle"
+            />
+        </h:panelGroup>
+    </h:form>
+</ui:composition>
